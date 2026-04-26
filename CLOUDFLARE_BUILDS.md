@@ -1,6 +1,6 @@
 # Cloudflare Workers Builds setup
 
-This repo deploys to a Cloudflare Worker named **`neoanaloglab-web`**
+This repo deploys to a Cloudflare Worker named **`dnglab-online`**
 (custom domain target: `dng.neoanaloglab.com`). The Worker is already
 created on the **ネオアナログ株式会社** Cloudflare account
 (account id `f58b8eb9bc38d1abc7b4796e41249b46`) by an initial
@@ -9,7 +9,7 @@ through Cloudflare's native **Workers Builds** dashboard integration.
 
 ## One-time setup in the Cloudflare dashboard
 
-1. Go to **Workers & Pages → `neoanaloglab-web` → Settings → Builds**.
+1. Go to **Workers & Pages → `dnglab-online` → Settings → Builds**.
 2. Click **Connect to Git**.
 3. Cloudflare prompts you to install the Cloudflare GitHub App. Pick
    **lexluthor0304** as the install scope and grant access to the
@@ -60,13 +60,17 @@ git push
 
 ## Custom domain (`dng.neoanaloglab.com`)
 
-After the first deploy, in the Worker's **Settings → Domains & Routes**:
+The custom domain is bound declaratively in `web/wrangler.jsonc`:
 
-1. Click **Add Custom Domain**.
-2. Enter `dng.neoanaloglab.com`. Cloudflare creates the DNS record
-   automatically because `neoanaloglab.com` is on this account.
-3. Wait ~30 s for the cert to issue.
-4. The site is live at https://dng.neoanaloglab.com.
+```jsonc
+"routes": [
+  { "pattern": "dng.neoanaloglab.com", "custom_domain": true }
+]
+```
 
-Until then it is reachable at
-https://neoanaloglab-web.lexluthor0304.workers.dev.
+Each `wrangler deploy` re-asserts the binding. Cloudflare auto-creates
+the DNS record and provisions the TLS cert because the
+`neoanaloglab.com` zone is on the same account. No dashboard click
+required.
+
+The site is live at https://dng.neoanaloglab.com.

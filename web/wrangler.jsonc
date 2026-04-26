@@ -3,7 +3,7 @@
 // language redirects, .wasm Content-Type, and ads.txt / sitemap headers.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "neoanaloglab-web",
+  "name": "dnglab-online",
   "main": "worker/index.ts",
   "compatibility_date": "2026-04-01",
   "assets": {
@@ -13,6 +13,12 @@
     "html_handling": "auto-trailing-slash",
     "run_worker_first": true
   },
+  // Bind the production custom domain. `custom_domain: true` makes Cloudflare
+  // create the DNS record and issue the cert automatically (the zone
+  // neoanaloglab.com is already on this account).
+  "routes": [
+    { "pattern": "dng.neoanaloglab.com", "custom_domain": true }
+  ],
   "observability": { "enabled": true },
   "vars": {
     "DEFAULT_LANG": "zh",

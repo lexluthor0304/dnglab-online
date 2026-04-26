@@ -1,5 +1,6 @@
 {
   "brand": "NeoAnalogLab",
+  "header.brand": "dnglab-online",
   "tagline": "ブラウザ上でカメラRAWをDNGに変換。アップロード不要、サーバ不要。",
   "nav.home": "ツール",
   "nav.cameras": "対応カメラ",

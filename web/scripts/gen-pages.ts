@@ -71,7 +71,7 @@ ${ogAltLocales}
 function header(lang: Lang): string {
   const link = (slug: string, key: string) => `<a href="/${lang}/${slug}${slug ? "/" : ""}" data-i18n="${key}">${escapeHtml(tt(lang, key))}</a>`;
   return `<header class="site-header">
-  <a class="brand" href="/${lang}/" data-i18n="brand">${escapeHtml(tt(lang, "brand"))}</a>
+  <a class="brand" href="/${lang}/" data-i18n="header.brand">${escapeHtml(tt(lang, "header.brand"))}</a>
   <nav>
     ${link("",         "nav.home")}
     ${link("cameras",  "nav.cameras")}

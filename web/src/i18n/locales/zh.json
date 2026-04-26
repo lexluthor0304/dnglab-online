@@ -1,5 +1,6 @@
 {
   "brand": "NeoAnalogLab",
+  "header.brand": "dnglab-online",
   "tagline": "浏览器里把任意相机 RAW 转成 DNG。无上传、无服务器。",
   "nav.home": "工具",
   "nav.cameras": "相机列表",

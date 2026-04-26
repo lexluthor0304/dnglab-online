@@ -1,5 +1,6 @@
 {
   "brand": "NeoAnalogLab",
+  "header.brand": "dnglab-online",
   "tagline": "Convert any camera RAW to DNG in your browser. No upload. No server.",
   "nav.home": "Tool",
   "nav.cameras": "Cameras",

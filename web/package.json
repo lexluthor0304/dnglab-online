@@ -9,7 +9,7 @@
     "gen:pages": "tsx scripts/gen-pages.ts",
     "gen:sitemap": "tsx scripts/gen-sitemap.ts",
     "gen": "npm run gen:cameras && npm run gen:pages",
-    "dev": "npm run gen && vite",
+    "dev": "VITE_GA_ID= npm run gen && vite",
     "build": "npm run wasm && npm run gen && vite build && npm run gen:sitemap",
     "build:ci": "npm run gen && vite build && npm run gen:sitemap",
     "preview": "wrangler dev",

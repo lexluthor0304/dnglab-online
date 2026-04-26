@@ -9,14 +9,45 @@ import { PAGES, LANGS, type Lang, type PageDef } from "./pages";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const root = resolve(__dirname, "..");
 
+// Inline .env loader. tsx (used to run this script) doesn't auto-load .env
+// files like Vite does, so we parse them ourselves. process.env wins so
+// Cloudflare Workers Builds dashboard env vars override file values.
+function loadDotEnv(file: string): Record<string, string> {
+  if (!existsSync(file)) return {};
+  const out: Record<string, string> = {};
+  for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+    if (m) out[m[1]] = m[2];
+  }
+  return out;
+}
+const envFile = loadDotEnv(resolve(root, ".env.production"));
+const fromEnv = (key: string, fallback = "") => process.env[key] ?? envFile[key] ?? fallback;
+
 const dicts: Record<Lang, Record<string, string>> = {
   zh: JSON.parse(readFileSync(resolve(root, "src/i18n/locales/zh.json"), "utf8")),
   en: JSON.parse(readFileSync(resolve(root, "src/i18n/locales/en.json"), "utf8")),
   ja: JSON.parse(readFileSync(resolve(root, "src/i18n/locales/ja.json"), "utf8")),
 };
 
-const SITE_ORIGIN = process.env.VITE_SITE_ORIGIN || "https://dng.neoanaloglab.com";
-const BRAND_HOME  = process.env.VITE_BRAND_HOME  || "https://neoanaloglab.com";
+const SITE_ORIGIN = fromEnv("VITE_SITE_ORIGIN", "https://dng.neoanaloglab.com");
+const BRAND_HOME  = fromEnv("VITE_BRAND_HOME",  "https://neoanaloglab.com");
+// GA4 measurement id. Set to empty in shell (e.g. via `npm run dev`) to skip
+// injection during local development so dev pageviews don't pollute stats.
+const GA_ID       = fromEnv("VITE_GA_ID");
+
+function gaSnippet(): string {
+  if (!GA_ID) return "";
+  // Standard gtag.js v4 snippet, exactly as Google supplies it.
+  return `<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${GA_ID}');
+  </script>`;
+}
 
 function tt(lang: Lang, key: string): string {
   return dicts[lang][key] ?? key;
@@ -65,7 +96,8 @@ ${ogAltLocales}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   ${fontPreload}
   <link rel="stylesheet" href="/src/styles/index.css">
-  <script>window.__LANG__="${lang}";</script>`;
+  <script>window.__LANG__="${lang}";</script>
+  ${gaSnippet()}`;
 }
 
 function header(lang: Lang): string {

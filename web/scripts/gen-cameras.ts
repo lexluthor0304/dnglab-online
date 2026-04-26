@@ -5,8 +5,8 @@
 // Upstream format: one big GitHub-flavoured markdown table at the top with
 // columns: | Make | Model | State | Modes | Remarks |.
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -60,5 +60,6 @@ for (const rawLine of md.split(/\r?\n/)) {
 }
 
 const outPath = resolve(__dirname, "../src/data/cameras.json");
+mkdirSync(dirname(outPath), { recursive: true });
 writeFileSync(outPath, JSON.stringify(rows, null, 2));
 console.log(`gen-cameras: wrote ${rows.length} rows → ${outPath}`);

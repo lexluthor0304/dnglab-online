@@ -6,9 +6,19 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$repo_root/wasm"
 
+# Source rustup env if cargo/wasm-pack aren't on PATH (e.g. invoked from npm,
+# Vite, CI without ~/.cargo/bin in PATH).
+if ! command -v wasm-pack >/dev/null 2>&1; then
+  if [ -f "$HOME/.cargo/env" ]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.cargo/env"
+  fi
+fi
+
 if ! command -v wasm-pack >/dev/null 2>&1; then
   echo "wasm-pack not found. Install with:" >&2
-  echo "  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh" >&2
+  echo "  cargo install wasm-pack   # needs rustup-managed Rust" >&2
+  echo "  or: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh" >&2
   exit 1
 fi
 

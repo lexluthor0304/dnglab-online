@@ -1,10 +1,21 @@
 {
   "name": "rawler-wasm",
-  "version": "0.0.0-placeholder",
-  "description": "Placeholder; overwritten by `wasm-pack build --target web --out-dir pkg`.",
   "type": "module",
+  "description": "WebAssembly bindings for the rawler camera RAW → DNG library",
+  "version": "0.1.0",
+  "license": "LGPL-2.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dnglab/dnglab"
+  },
+  "files": [
+    "rawler_wasm_bg.wasm",
+    "rawler_wasm.js",
+    "rawler_wasm.d.ts"
+  ],
   "main": "rawler_wasm.js",
   "types": "rawler_wasm.d.ts",
-  "files": ["rawler_wasm_bg.wasm", "rawler_wasm.js", "rawler_wasm.d.ts"],
-  "sideEffects": ["./rawler_wasm.js", "./snippets/*"]
+  "sideEffects": [
+    "./snippets/*"
+  ]
 }

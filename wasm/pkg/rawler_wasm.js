@@ -152,10 +152,6 @@ function debugString(val) {
     return className;
 }
 
-export function _start() {
-    wasm._start();
-}
-
 function passArray8ToWasm0(arg, malloc) {
     const ptr = malloc(arg.length * 1, 1) >>> 0;
     getUint8ArrayMemory0().set(arg, ptr / 1);
@@ -168,32 +164,6 @@ function takeFromExternrefTable0(idx) {
     wasm.__externref_table_dealloc(idx);
     return value;
 }
-
-function getArrayU8FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
-}
-/**
- * Convert an in-memory camera RAW file to a DNG byte stream.
- *
- * `input` is the RAW file as a `Uint8Array`. `options` is an optional plain
- * JS object; see `JsConvertOptions` for available keys (camelCase).
- * @param {Uint8Array} input
- * @param {any} options
- * @returns {Uint8Array}
- */
-export function convert_raw_to_dng(input, options) {
-    const ptr0 = passArray8ToWasm0(input, wasm.__wbindgen_malloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.convert_raw_to_dng(ptr0, len0, options);
-    if (ret[3]) {
-        throw takeFromExternrefTable0(ret[2]);
-    }
-    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
-    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
-    return v2;
-}
-
 /**
  * Identify the camera that produced the supplied RAW file.
  *
@@ -221,6 +191,35 @@ export function detect_camera(input) {
     } finally {
         wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
     }
+}
+
+function getArrayU8FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
+}
+/**
+ * Convert an in-memory camera RAW file to a DNG byte stream.
+ *
+ * `input` is the RAW file as a `Uint8Array`. `options` is an optional plain
+ * JS object; see `JsConvertOptions` for available keys (camelCase).
+ * @param {Uint8Array} input
+ * @param {any} options
+ * @returns {Uint8Array}
+ */
+export function convert_raw_to_dng(input, options) {
+    const ptr0 = passArray8ToWasm0(input, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.convert_raw_to_dng(ptr0, len0, options);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
+
+export function _start() {
+    wasm._start();
 }
 
 async function __wbg_load(module, imports) {

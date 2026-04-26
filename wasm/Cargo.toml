@@ -24,6 +24,12 @@ uuid = { version = "1", features = ["v4", "js"] }
 # getrandom 0.3 needs the `wasm_js` backend on wasm32-unknown-unknown
 # (the legacy `js` feature was renamed in 0.3).
 getrandom = { version = "0.3", features = ["wasm_js"] }
+# rawler uses `chrono::Local::now()` and `chrono::Local.from_local_datetime()`
+# in the convert/metadata path. On wasm32-unknown-unknown these would panic
+# with "time not implemented on this platform" because std has no clock.
+# `wasmbind` re-routes chrono to `js_sys::Date`. Cargo unifies features so
+# rawler picks this up automatically without a source change.
+chrono = { version = "0.4", features = ["wasmbind"] }
 
 [profile.release]
 opt-level = "z"

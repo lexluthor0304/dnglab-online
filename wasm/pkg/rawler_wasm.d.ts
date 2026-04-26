@@ -1,13 +1,5 @@
 /* tslint:disable */
 /* eslint-disable */
-export function _start(): void;
-/**
- * Convert an in-memory camera RAW file to a DNG byte stream.
- *
- * `input` is the RAW file as a `Uint8Array`. `options` is an optional plain
- * JS object; see `JsConvertOptions` for available keys (camelCase).
- */
-export function convert_raw_to_dng(input: Uint8Array, options: any): Uint8Array;
 /**
  * Identify the camera that produced the supplied RAW file.
  *
@@ -15,6 +7,14 @@ export function convert_raw_to_dng(input: Uint8Array, options: any): Uint8Array;
  * the UI before kicking off a full conversion.
  */
 export function detect_camera(input: Uint8Array): string;
+/**
+ * Convert an in-memory camera RAW file to a DNG byte stream.
+ *
+ * `input` is the RAW file as a `Uint8Array`. `options` is an optional plain
+ * JS object; see `JsConvertOptions` for available keys (camelCase).
+ */
+export function convert_raw_to_dng(input: Uint8Array, options: any): Uint8Array;
+export function _start(): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 

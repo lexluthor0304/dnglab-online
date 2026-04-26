@@ -23,3 +23,22 @@ web/en/
 web/ja/
 web/index.html
 web/src/data/cameras.json
+
+# Test RAW files dropped at the repo root for ad-hoc verification.
+# Don't commit anyone's photos.
+/*.NEF
+/*.nef
+/*.CR2
+/*.cr2
+/*.CR3
+/*.cr3
+/*.ARW
+/*.arw
+/*.RAF
+/*.raf
+/*.ORF
+/*.orf
+/*.RW2
+/*.rw2
+/*.DNG
+/*.dng

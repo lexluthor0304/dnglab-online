@@ -2,8 +2,9 @@ use std::{
   borrow::Cow,
   io::{self, Seek, Write},
   mem::size_of,
-  time::Instant,
 };
+#[cfg(feature = "instant-timing")]
+use std::time::Instant;
 
 use image::{DynamicImage, codecs::jpeg::JpegEncoder, imageops::FilterType};
 use log::debug;
@@ -316,12 +317,14 @@ where
   }
 
   pub fn preview(&mut self, img: &DynamicImage, quality: f32) -> Result<()> {
+    #[cfg(feature = "instant-timing")]
     let now = Instant::now();
     let preview_img = if img.width() > 1024 {
       DynamicImage::ImageRgb8(img.resize(1024, 768, FilterType::Nearest).to_rgb8())
     } else {
       DynamicImage::ImageRgb8(img.to_rgb8())
     };
+    #[cfg(feature = "instant-timing")]
     debug!("preview downscale: {} s", now.elapsed().as_secs_f32());
 
     self.ifd_mut().add_tag(TiffCommonTag::ImageWidth, Value::long(preview_img.width()));
@@ -338,6 +341,7 @@ where
     //ifd.add_tag(TiffRootTag::YResolution, Rational { n: 1, d: 1 })?;
     //ifd.add_tag(TiffRootTag::ResolutionUnit, ResolutionUnit::None.to_u16())?;
 
+    #[cfg(feature = "instant-timing")]
     let now = Instant::now();
     let offset = self.writer.dng.position()?;
     // TODO: improve offsets?
@@ -346,6 +350,7 @@ where
       .write_with_encoder(jpeg_encoder)
       .map_err(|err| io::Error::new(io::ErrorKind::Other, format!("Failed to write jpeg preview: {:?}", err)))?;
     let data_len = self.writer.dng.position()? - offset;
+    #[cfg(feature = "instant-timing")]
     debug!("writing preview: {} s", now.elapsed().as_secs_f32());
 
     self.ifd_mut().add_value(TiffCommonTag::StripOffsets, Value::Long(vec![offset]));

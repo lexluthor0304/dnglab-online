@@ -1,0 +1,59 @@
+<p>这是一份完整指南，介绍如何把 Canon CR3 文件批量或单张转换为 Adobe DNG，
+以及为什么这一步在长期归档中很重要。</p>
+
+<h2>什么是 CR3？</h2>
+<p>CR3 是 Canon 在 EOS M50（2018 年）首次引入、随后在 EOS R 系列与近期 EOS 系列上
+全面采用的新一代 RAW 格式。它基于 ISO Base Media File Format（与 MP4 类似的 MOV 容器），
+内部使用 Canon 自研的 CRX 编码——一种类似 JPEG 2000 的小波变换 + 自适应 Golomb-Rice
+编码的有损 / 无损混合压缩。相比上一代 CR2，CR3 体积更小、读取更快，但兼容性更差：
+不是所有解码器都跟上了 CRX 的反向工程进度。</p>
+
+<h2>为什么要转成 DNG</h2>
+
+<h3>归档兼容性</h3>
+<p>CRX 是闭源、专有的。Canon 任何一次未来更新都可能改动它的细节，而老版本的 Lightroom
+或 Camera Raw 不一定支持你新买相机的 CR3 变体。把 CR3 转成 DNG 之后，文件遵循
+2004 年公开的 Adobe DNG 标准，未来 20 年内基本不会失去打开能力。</p>
+
+<h3>文件体积</h3>
+<p>把 CR3 转成 LJPEG-92 无损压缩的 DNG，体积通常与原 CR3 相当（误差在 5% 以内），
+有时甚至更小，因为 LJPEG-92 在某些相机的拜耳模式下压缩率更高。</p>
+
+<h3>编辑器一致性</h3>
+<p>把整个图库统一成 DNG，可以避免「我的 darktable 看不懂这台 EOS R5 Mark II 的 CR3，
+但 Lightroom 可以」这种问题——所有现代编辑器都能读 DNG。</p>
+
+<h2>具体步骤</h2>
+<ol>
+  <li>打开 <a href="/zh/">RAW → DNG 转换器</a> 主页</li>
+  <li>把 .CR3 文件拖入虚线框，或点击选择文件</li>
+  <li>等待页面顶部的状态徽章显示「READY」（首次访问会下载约 6 MB 的 .wasm，下次会缓存）</li>
+  <li>识别栏会显示你的相机型号（例如 "Canon EOS R5"）</li>
+  <li>选项区默认勾选「无损压缩」「嵌入预览」「嵌入缩略图」，一般无需改动</li>
+  <li>点击「开始转换」，进度条会出现，5–15 秒后浏览器自动触发下载</li>
+</ol>
+
+<h2>常见问题</h2>
+
+<h3>转换出错：「unsupported camera mode」</h3>
+<p>Canon 在固件升级中偶尔会引入新的图像传感器模式（如某些机型的预拍摄、HDR 合成），
+这些模式可能尚未被 dnglab 数据库覆盖。请提交一份样张到 dnglab 项目，维护者会
+在下个版本添加支持。</p>
+
+<h3>转换很慢</h3>
+<p>WASM 当前是单线程的，rayon 并行库会自动降级为串行。一张 RAW 在浏览器里通常比
+原生 dnglab CLI 慢 4–10 倍。如果你需要批量处理几百张文件，请下载
+<a href="https://github.com/dnglab/dnglab/releases">原生 dnglab CLI</a>。</p>
+
+<h3>转出来的 DNG 比原 CR3 大</h3>
+<p>这是正常的——LJPEG-92 是无损压缩，没法压得比 CRX 的有损模式更小。如果你的 CR3
+是「Lossless」而不是「C-RAW」，转出来的 DNG 体积通常很接近。</p>
+
+<h2>什么不要做</h2>
+<p>不要把转换好的 DNG 删掉原 CR3 后立刻清空回收站——先用 Lightroom 或 darktable
+打开新 DNG，确认色彩、白平衡、镜头矫正都正常。dnglab 项目质量很高，但不是零 bug，
+保留 CR3 原文件直到你确认 DNG 工作流没问题，是稳妥的做法。</p>
+
+<h2>相关</h2>
+<p>另一篇详细指南：<a href="/zh/guides/arw/">Sony ARW 转 DNG 完整指南</a>。
+完整支持的相机列表见 <a href="/zh/cameras/">支持的相机</a>。</p>

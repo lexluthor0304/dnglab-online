@@ -1084,12 +1084,14 @@ impl RawLoader {
   }
 
   /// Decodes a file into a RawImage
+  #[cfg(feature = "std-fs")]
   pub fn decode_file(&self, path: &Path) -> Result<RawImage> {
     let rawfile = RawSource::new(path)?;
     self.decode(&rawfile, &RawDecodeParams::default(), false)
   }
 
   /// Decodes a file into a RawImage
+  #[cfg(feature = "std-fs")]
   pub fn raw_image_count_file(&self, path: &Path) -> Result<usize> {
     let rawfile = RawSource::new(path).map_err(|err| RawlerError::with_io_error("raw_image_count_file()", path, err))?;
     let decoder = self.get_decoder(&rawfile)?;

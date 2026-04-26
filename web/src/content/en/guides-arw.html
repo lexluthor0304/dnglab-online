@@ -1,0 +1,66 @@
+<p>This guide covers the characteristics of Sony ARW files and what to watch
+for when converting them to Adobe DNG.</p>
+
+<h2>What is ARW</h2>
+<p>ARW (Alpha RAW) is Sony's mainline RAW format, in use since the Alpha
+series in 2006 and continuing on the α7 / α7R / α9 / α1 / FX bodies. It is
+essentially an extension of TIFF, with one of the following compression
+modes:</p>
+<ul>
+  <li><strong>14-bit Uncompressed</strong> — flagship bodies (α1, α7R V):
+      largest files, fastest decode</li>
+  <li><strong>14-bit Lossless Compressed</strong> — α7R V, α7 IV, α1, etc.:
+      Sony's proprietary lossless</li>
+  <li><strong>12-bit Lossy Compressed</strong> — older bodies' default:
+      lossy at 12 bits per pixel</li>
+</ul>
+
+<h2>Why DNG</h2>
+<p>Some early Sony bodies (α7 II era) ship ARWs with colour quirks in certain
+RawTherapee and darktable releases. Conversion to DNG via dnglab applies its
+unified calibration matrices, producing colours close to Lightroom's defaults
+and making archives much easier.</p>
+
+<p>For α7R bodies whose RAWs run 60 MB+, LJPEG-92 lossless DNG is often
+10–20% smaller — meaningful storage savings at scale.</p>
+
+<h2>Step by step</h2>
+<ol>
+  <li>Open the <a href="/en/">homepage</a></li>
+  <li>Drop the .ARW file (one at a time; for batches use the dnglab CLI)</li>
+  <li>Wait for READY</li>
+  <li>Defaults — Lossless / Embed preview — are fine</li>
+  <li>Click "Convert"</li>
+  <li>The browser auto-starts the download when ready</li>
+</ol>
+
+<h2>Approximate timings</h2>
+<table class="camera-table">
+  <thead><tr><th>Body / file</th><th>~ duration (M3 MacBook Pro / Chrome)</th></tr></thead>
+  <tbody>
+    <tr><td>α7 III 24MP 12-bit lossy (~24 MB)</td><td>2–4 s</td></tr>
+    <tr><td>α7 IV 33MP 14-bit lossless (~50 MB)</td><td>6–10 s</td></tr>
+    <tr><td>α7R V 61MP 14-bit lossless (~120 MB)</td><td>15–25 s</td></tr>
+    <tr><td>α1 50MP uncompressed (~100 MB)</td><td>10–18 s</td></tr>
+  </tbody>
+</table>
+
+<h2>FAQ</h2>
+
+<h3>White balance differs from the native ARW</h3>
+<p>Expected. Sony stores white-balance parameters in proprietary SR2 / ARW
+metadata segments. dnglab reads them and writes them out as DNG-standard
+fields (AsShotNeutral / AsShotWhiteXY). Downstream editors should produce
+the same visual result, even if the internal values differ.</p>
+
+<h3>α7R high-resolution files run out of browser memory</h3>
+<p>Decoding a 61MP 14-bit lossless ARW transiently uses ~700 MB. If your
+browser crashes mid-conversion, switch to the desktop dnglab CLI.</p>
+
+<h3>Are HEIF / HIF files supported?</h3>
+<p>No. HIF is Sony's HEIF-encoded 8-bit format on α1, α7S III, and similar
+bodies — it's already a "delivered" format, not RAW, so converting to DNG
+makes no sense.</p>
+
+<h2>Related</h2>
+<p>Companion guide: <a href="/en/guides/cr3/">Canon CR3 to DNG</a>.</p>

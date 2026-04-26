@@ -201,6 +201,7 @@ impl From<JfifError> for RawlerError {
 ///   Err(e) => ... some appropriate action when the file is unreadable ...
 /// };
 /// ```
+#[cfg(feature = "std-fs")]
 pub fn decode_file<P: AsRef<Path>>(path: P) -> Result<RawImage> {
   LOADER.decode_file(path.as_ref())
 }
@@ -242,6 +243,7 @@ pub fn get_decoder(rawfile: &RawSource) -> Result<Box<dyn Decoder>> {
   LOADER.get_decoder(rawfile)
 }
 
+#[cfg(feature = "std-fs")]
 pub fn raw_image_count_file<P: AsRef<Path>>(path: P) -> Result<usize> {
   LOADER.raw_image_count_file(path.as_ref())
 }

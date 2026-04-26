@@ -53,6 +53,7 @@ impl Default for RawProcessingParams {
   }
 }
 
+#[cfg(feature = "std-fs")]
 pub fn process_raw_image<W: Write + Seek + Send>(raw: &Path, image_file: &mut W, params: &RawProcessingParams) -> crate::Result<()> {
   let rawfile = RawSource::new(raw)?;
   let decoder = crate::get_decoder(&rawfile)?;

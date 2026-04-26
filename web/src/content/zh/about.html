@@ -1,0 +1,33 @@
+<p>NeoAnalogLab 是一个专注于影像处理工具的开源实验室。本工具是其下的 RAW → DNG 在线转换器，
+让你不用安装 Lightroom Classic、不用上传到云端服务器，就能在自己的浏览器里直接把
+Canon CR3、Nikon NEF、Sony ARW、Fujifilm RAF 等几十种相机原生 RAW 格式转换成 Adobe DNG。</p>
+
+<h2>工作原理</h2>
+
+<p>本站把开源 Rust 库 <a href="https://github.com/dnglab/dnglab">dnglab</a>（核心 crate
+名为 <code>rawler</code>，遵循 LGPL-2.1 协议）编译成了 WebAssembly。当你拖入一张 RAW 文件，
+浏览器会下载约 6–10 MB 的 .wasm 文件并在你的设备上完整运行解码、白平衡矩阵处理、
+LJPEG-92 无损压缩，最终输出标准的 Adobe DNG 1.4。</p>
+
+<p>整个过程没有一字节图像数据离开你的电脑，<strong>不是「我们承诺不存」，而是技术上根本无法上传</strong>，
+所有计算都在 JavaScript 沙箱里完成。这一点也是我们选择 WASM 而不是后端服务的核心理由——
+摄影师的版权与隐私不应建立在服务条款的承诺上。</p>
+
+<h2>为什么需要 DNG</h2>
+
+<p>DNG（Digital Negative，数字负片）是 Adobe 在 2004 年公开的开放 RAW 格式。把你的 CR3 / NEF
+/ ARW 转成 DNG 之后：</p>
+
+<ul>
+  <li>文件不再依赖某一代相机厂商专有解码器，未来不会因厂商弃维而失去打开能力</li>
+  <li>体积通常更小（无损压缩），归档与备份更省空间</li>
+  <li>能被任何主流图像编辑器读懂——Lightroom、Capture One、darktable、RawTherapee 等</li>
+</ul>
+
+<h2>致谢</h2>
+
+<p>感谢 <a href="https://github.com/dnglab/dnglab">dnglab</a> 项目的所有贡献者，
+让纯 Rust 实现的高质量 RAW 解码与 DNG 编码成为可能。NeoAnalogLab 仅在其上做了
+WebAssembly 包装与一个像素风的网页前端。</p>
+
+<p>项目源代码与 issue：<a href="https://github.com/dnglab/dnglab">github.com/dnglab/dnglab</a>。</p>

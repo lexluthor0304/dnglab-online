@@ -1,0 +1,39 @@
+<h2>Will my RAW file be uploaded?</h2>
+<p>No. The site is a static page plus a WebAssembly module. When you drop a file,
+all decoding and encoding happens in your own browser; the bytes never leave
+your machine. The site is hosted on Cloudflare Workers, and we don't operate
+any backend that could receive your image data.</p>
+
+<h2>Which cameras and formats are supported?</h2>
+<p>Including but not limited to: Canon CR3 / CR2 / CRW, Nikon NEF / NRW,
+Sony ARW / SR2 / SRF, Fujifilm RAF, Olympus ORF, Panasonic / Leica RW2,
+Pentax PEF, Hasselblad 3FR, Phase One IIQ, Leaf MOS, Mamiya MEF,
+Minolta MRW, Samsung SRW, Kodak DCS / KDC / DCR, Epson ERF, ARRI ARI.
+See the full model list on
+<a href="/en/cameras/">Supported cameras</a>.</p>
+
+<h2>How long does conversion take?</h2>
+<p>Depends on file size and CPU. A 30 MB CR3 typically takes 1–3 seconds;
+a 100 MB CR3 around 5–15 seconds; in rare cases a large Sony ARW lossless
+file may take 15–30 seconds. The WASM build is single-threaded, so it's
+4–10× slower than the native dnglab CLI.</p>
+
+<h2>What browsers are supported?</h2>
+<p>Any modern browser with WebAssembly and ES2022: Chrome / Edge ≥ 100,
+Firefox ≥ 100, Safari ≥ 15.4. Mobile works but is not recommended — RAW
+files of 30–100 MB will hit memory limits sooner on phones.</p>
+
+<h2>Are the resulting DNGs Lightroom-compatible?</h2>
+<p>Yes. Output is standard Adobe DNG 1.4 with full EXIF, camera calibration
+matrices, and (optionally) an embedded preview. Lightroom Classic / Lightroom
+CC / Camera Raw / Capture One open them directly.</p>
+
+<h2>Can I batch-convert?</h2>
+<p>The v1 build processes one file at a time. For batches, install the native
+<a href="https://github.com/dnglab/dnglab/releases">dnglab CLI</a>
+— faster and supports recursive directory walks.</p>
+
+<h2>Will metadata be modified?</h2>
+<p>No active rewriting. The DNG keeps the original RAW's EXIF, white balance,
+and lens parameters. We only add the DNG-mandated fields (DNGVersion,
+DNGBackwardVersion, UniqueCameraModel).</p>

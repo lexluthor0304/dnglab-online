@@ -66,6 +66,7 @@ impl Default for ConvertParams {
 /// We don't accept a DNG file path here, because we don't know
 /// how to handle existing target files, buffering, etc.
 /// This is up to the caller.
+#[cfg(feature = "std-fs")]
 pub fn convert_raw_file<W: Write + Seek + Send>(raw: &Path, dng: &mut W, params: &ConvertParams) -> crate::Result<()> {
   let original_filename = raw.file_name().and_then(OsStr::to_str).unwrap_or_default();
   //let raw_stream = BufReader::new(File::open(raw)?); // TODO: add path hint to error?

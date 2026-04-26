@@ -1,0 +1,42 @@
+<p>NeoAnalogLab は画像処理ツールに特化したオープンソースのラボです。本プロジェクトは
+その配下にある RAW → DNG オンライン変換ツールで、Lightroom Classic をインストールすることなく、
+クラウドサーバへのアップロードもなしに、ブラウザ内で Canon CR3、Nikon NEF、Sony ARW、
+Fujifilm RAF など数十種類のカメラ純正 RAW フォーマットを Adobe DNG に変換できます。</p>
+
+<h2>仕組み</h2>
+
+<p>本サイトは、オープンソースの Rust ライブラリ
+<a href="https://github.com/dnglab/dnglab">dnglab</a>（コアの crate 名は
+<code>rawler</code>、LGPL-2.1 ライセンス）を WebAssembly にコンパイルしています。
+RAW ファイルをドロップすると、ブラウザは約 6〜10 MB の <code>.wasm</code> ファイルを
+ダウンロードし、デコード、ホワイトバランス行列処理、LJPEG-92 ロスレス圧縮を
+すべてあなたのデバイス上で実行し、標準の Adobe DNG 1.4 を出力します。</p>
+
+<p>画像データは 1 バイトもあなたのコンピュータから出ません。
+<strong>「アップロードしないと約束する」のではなく、技術的にアップロード自体が不可能</strong>です。
+すべての処理が JavaScript サンドボックス内で完結するためです。バックエンドではなく
+WebAssembly を選んだ理由はまさにここにあります。写真家の著作権とプライバシーは
+利用規約の約束ではなく、技術によって保証されるべきだからです。</p>
+
+<h2>なぜ DNG なのか</h2>
+
+<p>DNG (Digital Negative) は Adobe が 2004 年に公開した RAW のオープンフォーマットです。
+CR3 / NEF / ARW を DNG に変換すれば：</p>
+
+<ul>
+  <li>特定のカメラベンダ専用デコーダに依存しなくなり、ベンダがサポートを終了しても
+      開けなくなる心配がない</li>
+  <li>多くの場合ファイルサイズが小さくなり（ロスレス圧縮）、保管と
+      バックアップの容量を節約できる</li>
+  <li>主要な画像エディタすべてで読み取れる ── Lightroom、Capture One、
+      darktable、RawTherapee など</li>
+</ul>
+
+<h2>謝辞</h2>
+
+<p>純粋な Rust 実装で高品質な RAW デコードと DNG エンコードを可能にしてくれた
+<a href="https://github.com/dnglab/dnglab">dnglab</a> プロジェクトの貢献者の皆様に感謝します。
+NeoAnalogLab はその上に WebAssembly ラッパーとピクセルアート風のフロントエンドを
+追加したにすぎません。</p>
+
+<p>ソースコードと issue：<a href="https://github.com/dnglab/dnglab">github.com/dnglab/dnglab</a>。</p>

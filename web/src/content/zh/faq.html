@@ -1,0 +1,33 @@
+<h2>我的 RAW 文件会上传到服务器吗？</h2>
+<p>不会。本站只是一份静态页面 + WebAssembly 模块。当你拖入文件，所有解码与编码工作
+都在你自己的浏览器进程里完成，文件字节从未离开你的电脑。本站托管在 Cloudflare Workers 上，
+我们没有也无法接收你的图像数据。</p>
+
+<h2>支持哪些相机和格式？</h2>
+<p>包括但不限于：Canon CR3 / CR2 / CRW、Nikon NEF / NRW、Sony ARW / SR2 / SRF、
+Fujifilm RAF、Olympus ORF、Panasonic / Leica RW2、Pentax PEF、Hasselblad 3FR、
+Phase One IIQ、Leaf MOS、Mamiya MEF、Minolta MRW、Samsung SRW、Kodak DCS / KDC / DCR、
+Epson ERF、ARRI ARI 等。完整型号清单见
+<a href="/zh/cameras/">支持的相机</a>页。</p>
+
+<h2>转换需要多久？</h2>
+<p>取决于文件大小和你的 CPU。一张 30 MB 的 CR3 通常 1–3 秒；一张 100 MB 的 CR3 大约 5–15 秒；
+极少数情况下大尺寸 Sony ARW 无损压缩文件可能需要 15–30 秒。WASM 当前是单线程的，所以速度
+比原生 dnglab CLI 慢 4–10 倍。</p>
+
+<h2>对浏览器有什么要求？</h2>
+<p>需要支持 WebAssembly 与 ES2022 的现代浏览器：Chrome / Edge ≥ 100、Firefox ≥ 100、
+Safari ≥ 15.4。手机端可用但不推荐——RAW 文件通常 30–100 MB，移动端内存限制会更早触发。</p>
+
+<h2>转换出来的 DNG 兼容 Lightroom 吗？</h2>
+<p>是的。本站输出的是标准 Adobe DNG 1.4，含完整 EXIF、相机校准矩阵和（可选的）嵌入预览图，
+能被 Lightroom Classic / Lightroom CC / Camera Raw / Capture One 直接打开。</p>
+
+<h2>可以批量转换吗？</h2>
+<p>v1 版本一次只能处理一张文件。如果你需要批量，建议下载原生 dnglab CLI：
+<a href="https://github.com/dnglab/dnglab/releases">github.com/dnglab/dnglab/releases</a>，
+速度更快也支持目录递归。</p>
+
+<h2>会改写元数据吗？</h2>
+<p>不会主动改写。DNG 中保留原始 RAW 的 EXIF、白平衡、镜头参数，仅添加 DNG 必需的字段
+（如 DNGVersion、DNGBackwardVersion、UniqueCameraModel）。</p>

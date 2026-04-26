@@ -1,0 +1,201 @@
+/* Pixel-style buttons, dropzone, progress, pills, banners. */
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 12px;
+  padding: calc(var(--unit) * 3) calc(var(--unit) * 5);
+  border: 0;
+  background: var(--primary);
+  color: var(--bg);
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow:
+     0 calc(var(--unit) * -1) 0 0 var(--fg),
+     0 var(--unit) 0 0 var(--bg-dim),
+     calc(var(--unit) * -1) 0 0 0 var(--fg),
+     var(--unit) 0 0 0 var(--bg-dim);
+}
+.btn:hover { background: var(--accent); color: var(--bg); }
+.btn:active { transform: translateY(2px); }
+.btn:disabled {
+  background: var(--muted);
+  color: var(--fg-dim);
+  cursor: not-allowed;
+  box-shadow:
+     0 calc(var(--unit) * -1) 0 0 var(--muted),
+     0 var(--unit) 0 0 var(--bg-dim),
+     calc(var(--unit) * -1) 0 0 0 var(--muted),
+     var(--unit) 0 0 0 var(--bg-dim);
+}
+
+.btn-secondary {
+  background: var(--bg-alt);
+  color: var(--fg);
+}
+.btn-secondary:hover { background: var(--muted); color: var(--fg); }
+
+/* Pixel "pill" — used for status indicators (READY / WARMING / ERROR). */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  padding: 4px 10px;
+  background: var(--muted);
+  color: var(--bg);
+}
+.pill.ready    { background: var(--primary); }
+.pill.busy     { background: var(--accent); color: var(--bg); }
+.pill.error    { background: var(--danger);  color: var(--fg); }
+
+.pill::before {
+  content: "";
+  width: 8px; height: 8px;
+  background: currentColor;
+  flex: 0 0 8px;
+}
+
+/* Drop zone */
+.dropzone {
+  border: 4px dashed var(--muted);
+  background: var(--bg-alt);
+  padding: calc(var(--unit) * 12) calc(var(--unit) * 6);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.1s linear, background 0.1s linear;
+}
+.dropzone.is-hover {
+  border-color: var(--primary);
+  background: rgba(124, 179, 66, 0.08);
+}
+.dropzone .icon {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--primary);
+  display: block;
+  margin-bottom: calc(var(--unit) * 3);
+}
+.dropzone p {
+  margin: calc(var(--unit) * 2) 0 0;
+  font-size: 16px;
+  color: var(--fg-dim);
+}
+.dropzone input[type="file"] { display: none; }
+
+/* Progress bar — segmented blocks */
+.progress {
+  --filled: 0;
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background: var(--bg-dim);
+  border: 2px solid var(--muted);
+  overflow: hidden;
+}
+.progress::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  width: calc(var(--filled, 0) * 1%);
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0 8px,
+    transparent 8px 12px
+  );
+  background-size: 12px 100%;
+  background-repeat: repeat-x;
+  transition: width 0.2s linear;
+}
+.progress.indeterminate::after {
+  width: 100%;
+  animation: progress-stripes 1.2s linear infinite;
+}
+@keyframes progress-stripes {
+  from { background-position: 0 0; }
+  to   { background-position: 24px 0; }
+}
+
+/* Banner — for warnings ("file > 300MB") and errors. */
+.banner {
+  padding: calc(var(--unit) * 3) calc(var(--unit) * 5);
+  font-size: 14px;
+  margin: calc(var(--unit) * 3) 0;
+  border-left: 6px solid var(--accent);
+  background: rgba(255, 203, 5, 0.10);
+}
+.banner.error  { border-color: var(--danger); background: rgba(230, 57, 70, 0.12); }
+.banner.info   { border-color: var(--link);   background: rgba(105, 210, 255, 0.10); }
+
+/* Pixel options form */
+.options {
+  display: grid;
+  gap: calc(var(--unit) * 3);
+  margin: calc(var(--unit) * 6) 0;
+}
+.options label {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--unit) * 3);
+  cursor: pointer;
+}
+.options input[type="checkbox"] {
+  appearance: none;
+  width: 16px; height: 16px;
+  background: var(--bg-dim);
+  border: 2px solid var(--muted);
+  cursor: pointer;
+  flex: 0 0 16px;
+}
+.options input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Lang switcher */
+.lang-switcher {
+  display: inline-flex;
+  gap: 2px;
+}
+.lang-switcher a {
+  font-family: var(--font-display);
+  font-size: 11px;
+  padding: 4px 8px;
+  text-decoration: none;
+  background: var(--bg-alt);
+  color: var(--fg-dim);
+}
+.lang-switcher a[aria-current="true"] {
+  background: var(--primary);
+  color: var(--bg);
+}
+.lang-switcher a:hover { background: var(--accent); color: var(--bg); }
+
+/* Ad slot — give it minimum height so layout doesn't jump when ad loads. */
+.ad-slot {
+  display: block;
+  margin: calc(var(--unit) * 6) auto;
+  text-align: center;
+  min-height: 90px;
+}
+.ad-slot.sidebar { min-height: 600px; }
+
+/* Camera list */
+.camera-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: calc(var(--unit) * 4) 0;
+}
+.camera-table th, .camera-table td {
+  text-align: left;
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
+  border-bottom: 2px solid var(--muted);
+}
+.camera-table th {
+  font-family: var(--font-display);
+  font-size: 11px;
+  background: var(--bg-dim);
+  color: var(--accent);
+}

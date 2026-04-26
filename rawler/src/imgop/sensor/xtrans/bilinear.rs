@@ -3,6 +3,7 @@
 
 use multiversion::multiversion;
 use rayon::prelude::*;
+#[cfg(feature = "instant-timing")]
 use std::time::Instant;
 
 use crate::{
@@ -50,8 +51,10 @@ impl Demosaic<f32, 3> for XTransBilinearDemosaic {
     if !cfa.is_rgb() {
       panic!("CFA pattern '{}' is not a RGB pattern, can not demosaic", cfa);
     }
+    #[cfg(feature = "instant-timing")]
     let now = Instant::now();
     let rgb = interpolate_bilinear(pixels, cfa, roi);
+    #[cfg(feature = "instant-timing")]
     log::debug!("X-Trans bilinear demosaic total time: {:.5}s", now.elapsed().as_secs_f32());
     rgb
   }

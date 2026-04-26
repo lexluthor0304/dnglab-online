@@ -1,0 +1,67 @@
+<p>A complete guide to converting Canon CR3 files to Adobe DNG, and why it
+matters for long-term archives.</p>
+
+<h2>What is CR3?</h2>
+<p>CR3 is the next-generation Canon RAW format introduced with the EOS M50
+(2018) and now standard across the EOS R line. It is built on the ISO Base
+Media File Format (the same MOV / MP4 container family) and uses Canon's
+proprietary CRX codec — a wavelet + adaptive Golomb-Rice scheme similar in
+spirit to JPEG 2000, with both lossless and "C-RAW" lossy modes. Compared
+with the older CR2, CR3 is smaller and faster to read, but compatibility is
+narrower: not every decoder has caught up with reverse-engineered CRX.</p>
+
+<h2>Why DNG</h2>
+
+<h3>Archive compatibility</h3>
+<p>CRX is closed and proprietary. Future Canon updates may tweak its details,
+and older Lightroom or Camera Raw releases may not decode CR3 from a brand-new
+body. Once a CR3 is converted to DNG, it follows Adobe's openly-published
+2004 standard and stays readable for decades.</p>
+
+<h3>File size</h3>
+<p>Converting CR3 to LJPEG-92 lossless DNG generally produces a file within
+±5% of the original; sometimes smaller, because LJPEG-92 occasionally
+compresses certain Bayer patterns more efficiently than CRX-Lossless.</p>
+
+<h3>Editor consistency</h3>
+<p>Standardising the library on DNG removes "darktable can't open this brand-new
+EOS R5 Mark II CR3 but Lightroom can" headaches — every modern editor reads DNG.</p>
+
+<h2>Step by step</h2>
+<ol>
+  <li>Open the <a href="/en/">RAW → DNG converter</a> homepage</li>
+  <li>Drop a .CR3 into the dashed box, or click to pick</li>
+  <li>Wait for the status pill to turn READY (first visit downloads ~6 MB of
+      .wasm; later visits use cache)</li>
+  <li>The detection line shows your camera ("Canon EOS R5", etc.)</li>
+  <li>Defaults — Lossless / Embed preview / Embed thumbnail — usually work; leave them on</li>
+  <li>Click "Convert"; the progress bar appears, and the browser auto-starts
+      a download in 5–15 seconds</li>
+</ol>
+
+<h2>FAQ</h2>
+
+<h3>"unsupported camera mode"</h3>
+<p>Canon occasionally introduces new sensor modes via firmware updates
+(pre-shoot, in-camera HDR composites). These may not yet be in the dnglab
+camera database. Submit a sample at the dnglab project; maintainers usually
+add support in the next release.</p>
+
+<h3>It's slow</h3>
+<p>The WASM build is single-threaded and rayon falls back to serial — expect
+4–10× slower than the native dnglab CLI. For batch work, install
+<a href="https://github.com/dnglab/dnglab/releases">native dnglab</a>.</p>
+
+<h3>The DNG is larger than the CR3</h3>
+<p>Expected. LJPEG-92 is lossless and can't beat CRX-Lossy. If your CR3 is
+already lossless rather than C-RAW, the DNG will be very close in size.</p>
+
+<h2>What not to do</h2>
+<p>Don't delete the original CR3 right after conversion. Open the new DNG in
+Lightroom or darktable first; verify colour, white balance, and lens
+corrections look right. dnglab is high-quality but not bug-free; keep
+originals until you've validated the workflow.</p>
+
+<h2>Related</h2>
+<p>Companion guide: <a href="/en/guides/arw/">Sony ARW to DNG</a>.
+Full support list: <a href="/en/cameras/">Supported cameras</a>.</p>

@@ -1,0 +1,22 @@
+// Cloudflare Workers config for NeoAnalogLab.
+// `assets` ships everything in dist/; `main` adds custom routing for
+// language redirects, .wasm Content-Type, and ads.txt / sitemap headers.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "neoanaloglab-web",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-04-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": true
+  },
+  "observability": { "enabled": true },
+  "vars": {
+    "DEFAULT_LANG": "zh",
+    "SITE_ORIGIN": "https://dng.neoanaloglab.com",
+    "BRAND_HOME": "https://neoanaloglab.com"
+  }
+}

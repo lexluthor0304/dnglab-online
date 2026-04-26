@@ -1,0 +1,57 @@
+<p>这份指南解释 Sony ARW 文件的特点，以及把它们转成 Adobe DNG 时需要注意的事。</p>
+
+<h2>什么是 ARW</h2>
+<p>ARW（Alpha RAW）是 Sony 自 2006 年 α 系列相机以来的主流 RAW 格式，沿用至今的
+α7 / α7R / α9 / α1 / FX 系列。ARW 内部本质是 TIFF 的扩展，使用以下几种压缩模式之一：</p>
+<ul>
+  <li><strong>14-bit Uncompressed</strong>（旗舰机型如 α1、α7R V）：体积最大但解码最快</li>
+  <li><strong>14-bit Lossless Compressed</strong>（α7R V、α7 IV、α1 等）：Sony 自有无损算法</li>
+  <li><strong>12-bit Lossy Compressed</strong>（多数老机型默认）：每像素 12 位的有损压缩</li>
+</ul>
+
+<h2>为什么要转 DNG</h2>
+<p>Sony 早期机型（α7 II 时代）的 ARW 在某些 RawTherapee 与 darktable 版本里有
+颜色偏差。把它们转成 DNG 可以利用 dnglab 的统一相机校准矩阵，得到与
+Lightroom 默认色彩接近的结果，并且方便归档。</p>
+
+<p>另外，Sony α7R 系列的 RAW 文件通常 60 MB 以上，转成 LJPEG-92 无损压缩 DNG
+后体积往往能减少 10–20%，长期归档省盘。</p>
+
+<h2>具体步骤</h2>
+<ol>
+  <li>打开 <a href="/zh/">主页转换器</a></li>
+  <li>拖入 .ARW 文件（一次一张；批量请用 dnglab CLI）</li>
+  <li>等顶部状态变 READY</li>
+  <li>选项默认勾选无损压缩 + 嵌入预览，保留即可</li>
+  <li>点击「开始转换」</li>
+  <li>转换完成后浏览器会自动弹出下载</li>
+</ol>
+
+<h2>转换时长参考</h2>
+<table class="camera-table">
+  <thead><tr><th>机型 / 文件</th><th>近似时长（M3 MacBook Pro / Chrome）</th></tr></thead>
+  <tbody>
+    <tr><td>α7 III 24MP 12-bit lossy（~24 MB）</td><td>2–4 秒</td></tr>
+    <tr><td>α7 IV 33MP 14-bit lossless（~50 MB）</td><td>6–10 秒</td></tr>
+    <tr><td>α7R V 61MP 14-bit lossless（~120 MB）</td><td>15–25 秒</td></tr>
+    <tr><td>α1 50MP uncompressed（~100 MB）</td><td>10–18 秒</td></tr>
+  </tbody>
+</table>
+
+<h2>常见问题</h2>
+
+<h3>白平衡和原生 ARW 不一致？</h3>
+<p>这是预期行为。Sony 把白平衡参数写在专有 SR2 / ARW 元数据段里，dnglab 会读取这些
+参数并以 DNG 标准格式（AsShotNeutral / AsShotWhiteXY）写出。下游编辑器读取时
+应该得到相同的视觉结果，但内部数值表达不同。</p>
+
+<h3>α7R 系列高分辨率文件浏览器内存不够？</h3>
+<p>61MP 的 14-bit lossless ARW 解码后中间状态约占 700 MB 内存。如果浏览器在
+转换中崩溃，请改用桌面版 dnglab CLI。</p>
+
+<h3>HEIF / HIF 文件支持吗？</h3>
+<p>不支持。HIF 是 Sony 在 α1、α7S III 等机型上的 HEIF 编码 8-bit 文件，本质上是 JPEG-XS
+后继者，不属于 RAW 范畴；它们已经是「成片」格式，转 DNG 没有意义。</p>
+
+<h2>相关</h2>
+<p>另一篇详细指南：<a href="/zh/guides/cr3/">Canon CR3 转 DNG 完整指南</a>。</p>

@@ -2,7 +2,6 @@
 
 use std::{
   fmt::Debug,
-  fs::File,
   io::Cursor,
   iter::repeat,
   ops::Deref,
@@ -10,7 +9,11 @@ use std::{
   sync::Arc,
 };
 
+#[cfg(feature = "std-fs")]
+use std::fs::File;
+
 use md5::Digest;
+#[cfg(feature = "std-fs")]
 use memmap2::MmapOptions;
 
 use crate::buffer::PaddedBuf;
@@ -21,11 +24,13 @@ pub struct RawSource {
 }
 
 enum RawSourceImpl {
+  #[cfg(feature = "std-fs")]
   Memmap(memmap2::Mmap),
   Memory(Arc<Vec<u8>>),
 }
 
 impl RawSource {
+  #[cfg(feature = "std-fs")]
   pub fn new(path: &Path) -> std::io::Result<Self> {
     let file = File::open(path)?;
     let mmap = unsafe { MmapOptions::new().populate().map(&file)? };
@@ -135,6 +140,7 @@ impl Deref for RawSource {
 
   fn deref(&self) -> &Self::Target {
     match &self.inner {
+      #[cfg(feature = "std-fs")]
       RawSourceImpl::Memmap(mmap) => mmap.deref(),
       RawSourceImpl::Memory(mem) => mem.deref(),
     }

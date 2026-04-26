@@ -1,0 +1,70 @@
+/* NeoAnalogLab — design tokens.
+ * Pixel fonts are self-hosted in /public/fonts/. Each @font-face is
+ * unicode-range gated so a Latin-only page never downloads CJK glyphs.
+ */
+
+/* Latin headings: Press Start 2P, no CJK. */
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("/fonts/PressStart2P-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+00A0-00FF, U+2000-206F;
+}
+
+/* Latin body: VT323. */
+@font-face {
+  font-family: "VT323";
+  src: url("/fonts/VT323-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+00A0-00FF, U+2000-206F;
+}
+
+/* Japanese pixel: DotGothic16. Covers JIS kanji + hiragana + katakana. */
+@font-face {
+  font-family: "DotGothic16";
+  src: url("/fonts/DotGothic16-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3000-303F, U+3040-309F, U+30A0-30FF, U+4E00-9FFF, U+FF00-FFEF;
+}
+
+/* Chinese pixel: Zpix (最像素). Broad CJK coverage including GB2312/GBK. */
+@font-face {
+  font-family: "Zpix";
+  src: url("/fonts/Zpix.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+3000-303F, U+4E00-9FFF, U+FF00-FFEF;
+}
+
+:root {
+  /* Palette — NES-inspired, hand-picked for AA contrast on --bg. */
+  --bg:        #0F0F1B;  /* deep indigo */
+  --bg-alt:    #1A1A2E;  /* card background */
+  --bg-dim:    #0A0A12;  /* footer / inset */
+  --fg:        #F8F8F8;  /* primary text */
+  --fg-dim:    #C0C0CC;  /* secondary text */
+  --primary:   #7CB342;  /* NES green: action / READY pill */
+  --accent:    #FFCB05;  /* Pikachu yellow: warnings, highlights */
+  --danger:    #E63946;  /* error */
+  --link:      #69D2FF;  /* desaturated cyan, AA on --bg */
+  --muted:     #6C7A89;  /* borders, dividers */
+
+  /* Spacing — every dimension is a multiple of --unit for pixel grid. */
+  --unit: 4px;
+
+  /* Font stacks. Per-body-class swap below. */
+  --font-display: "Press Start 2P", "DotGothic16", "Zpix", ui-monospace, monospace;
+  --font-body:    "VT323", "DotGothic16", "Zpix", ui-monospace, monospace;
+}
+
+/* Per-language body font overrides — set on <html lang="..."> */
+html[lang="ja"] { --font-body: "DotGothic16", "VT323", ui-monospace, monospace; }
+html[lang="zh"] { --font-body: "Zpix", "VT323", ui-monospace, monospace; }
+html[lang="en"] { --font-body: "VT323", ui-monospace, monospace; }

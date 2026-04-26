@@ -1,0 +1,37 @@
+<h2>RAW ファイルはサーバへアップロードされますか？</h2>
+<p>いいえ。本サイトは静的ページと WebAssembly モジュールだけで構成されています。
+ファイルをドロップすると、デコードもエンコードもすべてあなたのブラウザ内で実行され、
+バイトデータが端末から出ることはありません。サイトは Cloudflare Workers でホストされていますが、
+画像データを受信できるバックエンドは存在しません。</p>
+
+<h2>対応カメラと対応フォーマットは？</h2>
+<p>以下を含みます：Canon CR3 / CR2 / CRW、Nikon NEF / NRW、Sony ARW / SR2 / SRF、
+Fujifilm RAF、Olympus ORF、Panasonic / Leica RW2、Pentax PEF、Hasselblad 3FR、
+Phase One IIQ、Leaf MOS、Mamiya MEF、Minolta MRW、Samsung SRW、Kodak DCS / KDC / DCR、
+Epson ERF、ARRI ARI など。完全な機種一覧は
+<a href="/ja/cameras/">対応カメラ</a>ページをご覧ください。</p>
+
+<h2>変換にどれくらい時間がかかりますか？</h2>
+<p>ファイルサイズと CPU によります。30 MB の CR3 で通常 1〜3 秒、100 MB の CR3 で
+約 5〜15 秒、まれに大型 Sony ARW のロスレス圧縮ファイルでは 15〜30 秒かかることがあります。
+WASM 版は現在シングルスレッドなので、ネイティブの dnglab CLI より 4〜10 倍遅くなります。</p>
+
+<h2>必要なブラウザ環境は？</h2>
+<p>WebAssembly と ES2022 をサポートするモダンブラウザが必要です：Chrome / Edge ≥ 100、
+Firefox ≥ 100、Safari ≥ 15.4。スマートフォンでも動作しますが推奨しません。
+RAW は通常 30〜100 MB あり、モバイル端末ではメモリ制限に先に達します。</p>
+
+<h2>変換した DNG は Lightroom と互換性がありますか？</h2>
+<p>はい。出力は標準の Adobe DNG 1.4 で、完全な EXIF、カメラキャリブレーション行列、
+（任意で）プレビュー画像を含みます。Lightroom Classic / Lightroom CC / Camera Raw /
+Capture One で直接開けます。</p>
+
+<h2>バッチ変換できますか？</h2>
+<p>v1 では 1 ファイルずつしか処理できません。バッチ処理にはネイティブの
+<a href="https://github.com/dnglab/dnglab/releases">dnglab CLI</a>
+の利用をおすすめします。高速で、ディレクトリ再帰にも対応しています。</p>
+
+<h2>メタデータは書き換えられますか？</h2>
+<p>能動的には書き換えません。元 RAW の EXIF、ホワイトバランス、レンズパラメータは
+そのまま保持し、DNG として必須なフィールド（DNGVersion、DNGBackwardVersion、
+UniqueCameraModel）のみ追加します。</p>

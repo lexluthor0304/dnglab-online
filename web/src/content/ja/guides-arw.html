@@ -1,0 +1,64 @@
+<p>Sony ARW ファイルの特徴と、Adobe DNG に変換する際に注意すべき点を解説します。</p>
+
+<h2>ARW とは</h2>
+<p>ARW（Alpha RAW）は 2006 年の α シリーズ以降、現在の α7 / α7R / α9 / α1 / FX
+シリーズに至るまで使われている Sony の主流 RAW フォーマットです。内部は本質的に
+TIFF の拡張で、以下のいずれかの圧縮モードを使用します：</p>
+<ul>
+  <li><strong>14-bit Uncompressed</strong>（フラッグシップ機種：α1、α7R V）：
+      最大サイズ、最速デコード</li>
+  <li><strong>14-bit Lossless Compressed</strong>（α7R V、α7 IV、α1 など）：
+      Sony 独自のロスレスアルゴリズム</li>
+  <li><strong>12-bit Lossy Compressed</strong>（古い機種のデフォルト）：
+      画素 12bit のロッシー圧縮</li>
+</ul>
+
+<h2>なぜ DNG なのか</h2>
+<p>Sony の初期機種（α7 II 世代）の ARW は、一部の RawTherapee や darktable バージョンで
+色のずれが発生することがあります。これらを DNG に変換すると、dnglab の統一された
+カメラキャリブレーション行列が適用され、Lightroom のデフォルトに近い色味が得られ、
+アーカイブもしやすくなります。</p>
+
+<p>また、Sony α7R シリーズの RAW は通常 60 MB を超えますが、LJPEG-92 ロスレス圧縮
+DNG にすればしばしば 10〜20% 小さくなり、長期保管のディスク容量を節約できます。</p>
+
+<h2>手順</h2>
+<ol>
+  <li><a href="/ja/">ホームページのコンバータ</a>を開く</li>
+  <li>.ARW ファイルをドロップ（一度に 1 ファイル。バッチは dnglab CLI を使用）</li>
+  <li>ステータスが READY になるまで待つ</li>
+  <li>「ロスレス + プレビュー埋め込み」のデフォルトのままで OK</li>
+  <li>「変換する」をクリック</li>
+  <li>変換完了後、ブラウザが自動でダウンロードを開始します</li>
+</ol>
+
+<h2>変換時間の目安</h2>
+<table class="camera-table">
+  <thead><tr><th>機種 / ファイル</th><th>所要時間（M3 MacBook Pro / Chrome）</th></tr></thead>
+  <tbody>
+    <tr><td>α7 III 24MP 12-bit lossy（〜24 MB）</td><td>2〜4 秒</td></tr>
+    <tr><td>α7 IV 33MP 14-bit lossless（〜50 MB）</td><td>6〜10 秒</td></tr>
+    <tr><td>α7R V 61MP 14-bit lossless（〜120 MB）</td><td>15〜25 秒</td></tr>
+    <tr><td>α1 50MP uncompressed（〜100 MB）</td><td>10〜18 秒</td></tr>
+  </tbody>
+</table>
+
+<h2>よくある質問</h2>
+
+<h3>ホワイトバランスが元の ARW と違う</h3>
+<p>これは想定どおりの動作です。Sony は独自の SR2 / ARW メタデータ領域に
+ホワイトバランスパラメータを保存しています。dnglab はこれらを読み取り、
+DNG 標準フィールド（AsShotNeutral / AsShotWhiteXY）として書き出します。
+下流のエディタで読み込むと視覚的には同じ結果が得られるはずですが、内部表現は異なります。</p>
+
+<h3>α7R 系の高解像度ファイルでブラウザのメモリが不足する</h3>
+<p>61MP の 14-bit ロスレス ARW のデコード中間状態は約 700 MB のメモリを使用します。
+変換中にブラウザがクラッシュする場合はデスクトップ版 dnglab CLI を使用してください。</p>
+
+<h3>HEIF / HIF ファイルは対応しますか？</h3>
+<p>非対応です。HIF は α1 や α7S III などで使用される Sony の HEIF エンコード 8-bit
+フォーマットで、本質的には JPEG-XS の後継であり RAW ではありません。すでに「完成画像」
+フォーマットなので、DNG に変換する意味がありません。</p>
+
+<h2>関連</h2>
+<p>もう一つの詳細ガイド：<a href="/ja/guides/cr3/">Canon CR3 を DNG に変換する完全ガイド</a>。</p>

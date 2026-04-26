@@ -1,0 +1,10 @@
+{
+  "name": "rawler-wasm",
+  "version": "0.0.0-placeholder",
+  "description": "Placeholder; overwritten by `wasm-pack build --target web --out-dir pkg`.",
+  "type": "module",
+  "main": "rawler_wasm.js",
+  "types": "rawler_wasm.d.ts",
+  "files": ["rawler_wasm_bg.wasm", "rawler_wasm.js", "rawler_wasm.d.ts"],
+  "sideEffects": ["./rawler_wasm.js", "./snippets/*"]
+}

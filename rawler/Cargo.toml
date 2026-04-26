@@ -17,9 +17,15 @@ version = "0.7.2"
 build = "data/join.rs"
 
 [features]
+default = ["std-fs", "instant-timing"]
+# Enables filesystem APIs (decode_file, RawSource::new(path)) backed by memmap2.
+# Disable on targets without an OS filesystem (e.g. wasm32-unknown-unknown).
+std-fs = ["dep:memmap2"]
+# Enables std::time::Instant-based debug timing in hot paths.
+# Disable on targets where Instant::now() panics (e.g. wasm32-unknown-unknown).
+instant-timing = []
 # This is a developer feature, it enabled deep inspection of algorithm execution stages
 clap = ["dep:clap"]
-#default = ["samplecheck"]
 inspector = []
 samplecheck = []
 
@@ -48,7 +54,7 @@ thiserror = "2.0"
 toml = "0.8"
 uuid = { version = "1.0", features = ["serde", "v4"] }
 weezl = "0.1.7"
-memmap2 = "0.9.4"
+memmap2 = { version = "0.9.4", optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.7", features = ["html_reports"] }
@@ -64,6 +70,16 @@ toml = "=0.8" # TODO - Updating breaks `join.rs` build script with message - Err
 
 
 
+
+[[bin]]
+name = "identify"
+path = "src/bin/identify.rs"
+required-features = ["std-fs"]
+
+[[bin]]
+name = "benchmark"
+path = "src/bin/benchmark.rs"
+required-features = ["std-fs"]
 
 [[bench]]
 harness = false

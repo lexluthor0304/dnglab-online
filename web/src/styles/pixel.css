@@ -1,0 +1,100 @@
+/* Global pixel-rendering rules. Imported once on every page. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+
+  /* Keep pixel fonts crisp — no smoothing, no subpixel AA. */
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+  text-rendering: optimizeSpeed;
+}
+
+img, canvas, video {
+  image-rendering: pixelated;
+  max-width: 100%;
+  height: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+h1 { font-size: 22px; margin: calc(var(--unit) * 6) 0 calc(var(--unit) * 4); }
+h2 { font-size: 18px; margin: calc(var(--unit) * 5) 0 calc(var(--unit) * 3); }
+h3 { font-size: 14px; margin: calc(var(--unit) * 4) 0 calc(var(--unit) * 2); }
+
+p, ul, ol { margin: 0 0 calc(var(--unit) * 4); }
+ul, ol { padding-left: calc(var(--unit) * 6); }
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+a:hover { color: var(--accent); }
+
+code, pre {
+  font-family: var(--font-display);
+  font-size: 0.85em;
+  background: var(--bg-dim);
+  padding: 2px 4px;
+}
+pre {
+  padding: calc(var(--unit) * 3);
+  overflow-x: auto;
+  border: 2px solid var(--muted);
+}
+
+/* Pixel-style inset border applied via box-shadow; no border-radius anywhere. */
+.pixel-box {
+  background: var(--bg-alt);
+  padding: calc(var(--unit) * 4);
+  box-shadow:
+     0 calc(var(--unit) * -1) 0 0 var(--fg),
+     0 var(--unit)        0 0 var(--fg),
+    calc(var(--unit) * -1) 0 0 0 var(--fg),
+    var(--unit)        0 0 0 var(--fg);
+  margin-block: calc(var(--unit) * 4);
+}
+
+/* Optional CRT scanline overlay — hidden by default. CrtToggle flips [hidden]. */
+#crt {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.18) 0 2px,
+    transparent 2px 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Visually hidden but accessible to screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* Respect users who prefer reduced motion — we don't animate much, but be polite. */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

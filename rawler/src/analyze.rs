@@ -1,4 +1,6 @@
-use std::{fs::metadata, io::Write, path::Path};
+use std::io::Write;
+#[cfg(feature = "std-fs")]
+use std::{fs::metadata, path::Path};
 
 use byteorder::{BigEndian, WriteBytesExt};
 use hex::FromHex;
@@ -145,6 +147,7 @@ pub enum FormatDump {
   Dng(DngFormat),
 }
 
+#[cfg(feature = "std-fs")]
 fn file_metadata<P: AsRef<Path>>(path: P, rawfile: &RawSource) -> Result<FileMetadata> {
   let fs_meta = metadata(&path).map_err(|e| RawlerError::with_io_error("read metadata", &path, e))?;
   let digest = rawfile.digest();
@@ -155,6 +158,7 @@ fn file_metadata<P: AsRef<Path>>(path: P, rawfile: &RawSource) -> Result<FileMet
   })
 }
 
+#[cfg(feature = "std-fs")]
 pub fn analyze_metadata<P: AsRef<Path>>(path: P) -> Result<AnalyzerResult> {
   //let input = BufReader::new(File::open(&path).map_err(|e| RawlerError::with_io_error("load into buffer", &path, e))?);
   let rawfile = RawSource::new(path.as_ref())?;
@@ -174,6 +178,7 @@ pub fn analyze_metadata<P: AsRef<Path>>(path: P) -> Result<AnalyzerResult> {
   Ok(result)
 }
 
+#[cfg(feature = "std-fs")]
 pub fn analyze_file_structure<P: AsRef<Path>>(path: P) -> Result<AnalyzerResult> {
   let rawfile = RawSource::new(path.as_ref())?;
   let decoder = crate::get_decoder(&rawfile)?;
@@ -185,6 +190,7 @@ pub fn analyze_file_structure<P: AsRef<Path>>(path: P) -> Result<AnalyzerResult>
   Ok(result)
 }
 
+#[cfg(feature = "std-fs")]
 pub fn extract_raw_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<RawImage> {
   let rawfile = RawSource::new(path.as_ref())?;
   let decoder = crate::get_decoder(&rawfile)?;
@@ -192,6 +198,7 @@ pub fn extract_raw_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> 
   Ok(rawimage)
 }
 
+#[cfg(feature = "std-fs")]
 pub fn raw_pixels_digest<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<[u8; 16]> {
   let rawimage = extract_raw_pixels(path, params)?;
   let byte_buf = match &rawimage.data {
@@ -201,6 +208,7 @@ pub fn raw_pixels_digest<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> R
   Ok(md5::compute(byte_buf).into())
 }
 
+#[cfg(feature = "std-fs")]
 pub fn extract_full_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<DynamicImage> {
   let rawfile = RawSource::new(path.as_ref())?;
   let decoder = crate::get_decoder(&rawfile)?;
@@ -210,12 +218,14 @@ pub fn extract_full_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) ->
   }
 }
 
+#[cfg(feature = "std-fs")]
 pub fn full_image_digest<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<[u8; 16]> {
   let image = extract_full_pixels(path, params)?;
   let byte_buf = image.as_bytes();
   Ok(md5::compute(byte_buf).into())
 }
 
+#[cfg(feature = "std-fs")]
 pub fn extract_preview_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<DynamicImage> {
   let rawfile = RawSource::new(path.as_ref())?;
   let decoder = crate::get_decoder(&rawfile)?;
@@ -225,12 +235,14 @@ pub fn extract_preview_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams)
   }
 }
 
+#[cfg(feature = "std-fs")]
 pub fn preview_digest<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<[u8; 16]> {
   let image = extract_preview_pixels(path, params)?;
   let byte_buf = image.as_bytes();
   Ok(md5::compute(byte_buf).into())
 }
 
+#[cfg(feature = "std-fs")]
 pub fn extract_thumbnail_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<DynamicImage> {
   let rawfile = RawSource::new(path.as_ref())?;
   let decoder = crate::get_decoder(&rawfile)?;
@@ -240,12 +252,14 @@ pub fn extract_thumbnail_pixels<P: AsRef<Path>>(path: P, params: &RawDecodeParam
   }
 }
 
+#[cfg(feature = "std-fs")]
 pub fn thumbnail_digest<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<[u8; 16]> {
   let image = extract_thumbnail_pixels(path, params)?;
   let byte_buf = image.as_bytes();
   Ok(md5::compute(byte_buf).into())
 }
 
+#[cfg(feature = "std-fs")]
 pub fn raw_to_srgb<P: AsRef<Path>>(path: P, params: &RawDecodeParams) -> Result<DynamicImage> {
   let rawfile = RawSource::new(path.as_ref())?;
   // Get decoder or return

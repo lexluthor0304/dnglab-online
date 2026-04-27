@@ -1,361 +1,176 @@
-# DNGLab - A camera RAW to DNG file format converter
+# dnglab-online
 
-[![CI](https://github.com/dnglab/dnglab/actions/workflows/ci.yaml/badge.svg)](https://github.com/dnglab/dnglab/actions/workflows/ci.yaml)
-[![Matrix](https://img.shields.io/matrix/dnglab:matrix.org?server_fqdn=matrix.org)](https://app.element.io/#/room/#dnglab:matrix.org)
+Convert any camera RAW file to DNG, entirely in the browser. No upload, no server.
 
-Command line tool to convert camera RAW files to Digital Negative Format (DNG).
+[![Live](https://img.shields.io/badge/live-dng.neoanaloglab.com-2ea44f)](https://dng.neoanaloglab.com)
+[![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-blue.svg)](LICENSE)
 
+This is a fork of [dnglab/dnglab](https://github.com/dnglab/dnglab) that compiles the
+`rawler` decoder + DNG writer to WebAssembly and ships it as a static web app.
+The original Rust CLI (`dnglab`) and library (`rawler`) are preserved unchanged.
 
- It is currently in alpha state, so don't expect a polished and bugfree application.
- Please report bugs in our [issue tracker](https://github.com/dnglab/dnglab/issues).
+## Try it
 
- Rawler crate is now published to crates.io, but please notice that the API is not yet stable
- and thus rawler is not following SemVer.
+<https://dng.neoanaloglab.com> — drag a RAW file into the page, get a DNG back.
+Available in English, 中文, and 日本語.
 
+## Why
 
-## Installation
+The Adobe DNG Converter is closed-source and Windows/macOS only. The upstream
+`dnglab` CLI works on Linux but assumes you have a Rust toolchain or a Debian
+package handy. `dnglab-online` removes both barriers — anything with a modern
+browser can convert RAW to DNG without installing anything and without sending
+files to a third party.
 
-There are pre-built binary packages for each release which can be downloaded from
-the asset section under [latest release](https://github.com/dnglab/dnglab/releases/latest).
-The **.deb** packages are for Debian based systems (amd64 and arm64), which can be installed
-with `dpkg -i dnglab_x.x.x_amd64.deb`. For non-Debian systems, you can use the single-binary file,
-for example `./dnglab_linux_x64 convert IMG_1234.CR2 IMG_1234.dng`.
+## Features
 
-Windows is not officially supported, but the release assets contains a **dnglab-win-x64_vx.x.x.zip**
-file with pre-built Windows binary. Please be aware that this build is untested.
+- **100% client-side.** RAW bytes never leave your device; conversion runs in a
+  Web Worker on a `Uint8Array`.
+- **Same camera support as upstream.** Anything `rawler` decodes (CR3/CR2/NEF/
+  ARW/RAF/ORF/RW2/PEF/IIQ/3FR/…) works here. See
+  [SUPPORTED_CAMERAS.md](SUPPORTED_CAMERAS.md).
+- **Lossless DNG (LJPEG-92)** by default; uncompressed is one option toggle away.
+- **Preview, thumbnail, scaling toggles** exposed in the UI.
+- **Trilingual** with localized `/en/`, `/zh/`, `/ja/` routes and SEO metadata.
+- **Retro pixel-font / CRT aesthetic**, optional CRT scanline effect.
+- **Privacy-friendly.** No analytics beyond a single GA4 page-view tag (opt-out
+  via cookie banner). No file upload, no fingerprinting, no third-party widgets.
 
-## Build from source
-Dnglab is written in Rust, so you can compile it by your own on your target machine.
-You need the Rust toolchain installed on your machine, see https://rustup.rs/ for that.
-Once the toolchain is installed, you can simply compile Dnglab with:
+## Architecture
 
-````
-git clone https://github.com/dnglab/dnglab.git
-cd dnglab
-cargo build --release
-````
-
-The dnglab binary is found at `./target/release/dnglab`.
-
-
-## Examples
-
-**Convert a single file:**
-
-    dnglab convert IMG_1234.CR3 IMG_1234.DNG
-
-**Convert whole directory:**
-
-    dnglab convert ~/DCIM/100EOS ~/filmrolls/photos-france
-
-
-## Supported cameras and file formats
-
-For a list of supported cameras please see [SUPPORTED_CAMERAS.md](SUPPORTED_CAMERAS.md).
-
-### Supported raw file formats
-
-|Manufacturer | Format | Supported                         | Remarks                                |
-|-------------|--------|-----------------------------------|----------------------------------------|
-|ARRI         | ARI    | ✅ Yes                            |                                        |
-|Canon        | CR3    | ✅ Yes                            | [CR3_STATE.md](CR3_STATE.md)           |
-|Canon        | CR2    | ✅ Yes                            |                                        |
-|Canon        | CRW    | ✅ Yes                            |                                        |
-|Epson        | ERF    | ✅ Yes                            |                                        |
-|Fujifilm     | RAF    | ✅ Yes                            |                                        |
-|Hasselblad   | 3FR    | ✅ Yes                            |                                        |
-|Kodak        | KDC    | ✅ Yes                            |                                        |
-|Kodak        | DCS    | ✅ Yes                            |                                        |
-|Kodak        | DCR    | ✅ Yes                            |                                        |
-|Leaf         | IIQ    | ✅ Yes                            |                                        |
-|Leaf         | MOS    | ✅ Yes                            |                                        |
-|Mamiya       | MEF    | ✅ Yes                            |                                        |
-|Minolta      | MRW    | ✅ Yes                            |                                        |
-|Nikon        | NEF    | ✅ Yes                            |                                        |
-|Nikon        | NRW    | ✅ Yes                            |                                        |
-|Olympus      | ORF    | ✅ Yes                            |                                        |
-|Panasonic/Leica| RW2  | ✅ Yes                            |                                        |
-|Pentax/Ricoh | PEF    | ✅ Yes                            |                                        |
-|Phase One    | IIQ    | ✅ Yes                            |                                        |
-|Samsung      | SRW    | ✅ Yes                            |                                        |
-|Sony         | ARW    | ✅ Yes                            |                                        |
-|Sony         | SRF    | ✅ Yes                            |                                        |
-|Sony         | SR2    | ✅ Yes                            |                                        |
-
-### Supported DNG features
-
- * DNG lossless compression (LJPEG-92)
-
-## Command line help
-
-### convert subcommand
-
-````
-dnglab-convert
-Convert raw image(s) into dng format
-
-USAGE:
-    dnglab convert [OPTIONS] <INPUT> <OUTPUT>
-
-ARGS:
-    <INPUT>     Input file or directory
-    <OUTPUT>    Output file or existing directory
-
-OPTIONS:
-        --artist <artist>
-            Set the artist tag
-
-    -c, --compression <compression>
-            Compression for raw image [default: lossless] [possible values: lossless, uncompressed]
-
-        --crop <crop>
-            DNG default crop [default: best] [possible values: best, activearea, none]
-
-    -d
-            turns on debugging mode
-
-        --dng-preview <preview>
-            DNG include preview image [default: true]
-
-        --dng-thumbnail <thumbnail>
-            DNG include thumbnail image [default: true]
-
-        --embed-raw <embedded>
-            Embed the raw file into DNG [default: true]
-
-    -f, --override
-            Override existing files
-
-    -h, --help
-            Print help information
-
-        --image-index <index>
-            Select a specific image index (or 'all') if file is a image container [default: 0]
-
-        --ljpeg92-predictor <predictor>
-            LJPEG-92 predictor [default: 1] [possible values: 1, 2, 3, 4, 5, 6, 7]
-
-    -r, --recursive
-            Process input directory recursive
-
-    -v
-            Print more messages
-````
-
-### analyze subcommand
-
-````
-dnglab-analyze
-Analyze raw image
-
-USAGE:
-    dnglab analyze [OPTIONS] <FILE>
-
-ARGS:
-    <FILE>    Input file
-
-OPTIONS:
-    -d                          turns on debugging mode
-        --full-pixel            Write uncompressed full pixel data to STDOUT
-    -h, --help                  Print help information
-        --json                  Format metadata as JSON
-        --meta                  Write metadata to STDOUT
-        --preview-checksum      Write MD5 checksum of preview pixels to STDOUT
-        --preview-pixel         Write uncompressed preview pixel data to STDOUT
-        --raw-checksum          Write MD5 checksum of raw pixels to STDOUT
-        --raw-pixel
-        --srgb                  Write sRGB 16-bit TIFF to STDOUT
-        --structure             Write file structure to STDOUT
-        --summary               Write summary information for file to STDOUT
-        --thumbnail-checksum    Write MD5 checksum of thumbnail pixels to STDOUT
-        --thumbnail-pixel       Write uncompressed preview pixel data to STDOUT
-    -v                          Print more messages
-        --yaml                  Format metadata as YAML
-
-````
-
-With **analyze**, you can get a full dump of the internal file structure
-as YAML or JSON. With JSON output, it's possible to filter and transform
-the data with **jq**.
-For example, to get the *cfa_layout* from the CMP1 box for CR3 files, you can
-write:
-
-````
-find /cr3samples/ -type f -name "*.CR3" -exec dnglab analyze --structure '{}' --json \; | \
-  jq ". | { file: .file.fileName, cfa_layout: .data.fileStructure.cr3.filebox.moov.trak[2].mdia.minf.stbl.stsd.craw.cfa_layout}"
-````
-
-The output is:
-
-```json
-{
-  "file": "Canon EOS 90D_CRAW_ISO_250_nocrop_nodual.CR3",
-  "cfa_layout": 1
-}
-{
-  "file": "Canon EOS 90D_CRAW_ISO_100_nocrop_nodual.CR3",
-  "cfa_layout": 1
-}
+```
+┌────────────────────────┐         ┌──────────────────────────┐
+│  Browser (Vite + TS)   │         │  Cloudflare Workers      │
+│  ────────────────────  │         │  ──────────────────────  │
+│  • drop-zone UI        │  HTML   │  • static asset serving  │
+│  • Web Worker          │ ◀─────▶ │  • lang routing          │
+│  • rawler-wasm         │         │  • Content-Type for .wasm│
+└──────────┬─────────────┘         └──────────────────────────┘
+           │ wasm
+           ▼
+┌────────────────────────┐
+│  rawler-wasm crate     │
+│  (wasm-bindgen)        │
+│  convert_raw_to_dng()  │
+│  detect_camera()       │
+└──────────┬─────────────┘
+           │
+           ▼
+┌────────────────────────┐
+│  rawler crate          │  ← upstream, unmodified
+│  (RAW decode +         │
+│   DNG writer)          │
+└────────────────────────┘
 ```
 
-### extract subcommand
+The WASM glue is a thin layer (`wasm/src/lib.rs`, ~90 lines) that wires
+`Uint8Array` ↔ `rawler::dng::convert::convert_raw_source`. A few crate-feature
+tweaks make `rawler` build for `wasm32-unknown-unknown`:
 
-````
-dnglab-extract
-Extract embedded original Raw from DNG
+- `chrono` with `wasmbind` so `Local::now()` doesn't panic on `time not implemented`.
+- `getrandom` with `wasm_js` and `uuid` with `js` for the v4 UUID path.
+- `params.embedded = false` to avoid `std::thread::spawn`, which is unavailable
+  on `wasm32-unknown-unknown`.
 
-USAGE:
-    dnglab extract [OPTIONS] <FILE> <INPUT> <OUTPUT>
+## Repository layout
 
-ARGS:
-    <FILE>      Input file
-    <INPUT>     Input file or directory
-    <OUTPUT>    Output file or existing directory
+```
+.
+├── rawler/        # upstream library — RAW decoders, DNG writer
+├── bin/           # upstream CLI — the dnglab binary
+├── wasm/          # NEW: rawler-wasm crate (wasm-bindgen bindings)
+└── web/           # NEW: Vite + TS frontend, Cloudflare Worker
+    ├── src/       #   UI, i18n, Web Worker entry
+    ├── scripts/   #   page generators (HTML, sitemap, supported cameras)
+    ├── worker/    #   Cloudflare Worker for lang routing + headers
+    └── public/    #   static assets (fonts, favicon, robots.txt)
+```
 
-OPTIONS:
-    -d                  turns on debugging mode
-    -f, --override      Override existing files
-    -h, --help          Print help information
-    -r, --recursive     Process input directory recursive
-        --skipchecks    Skip integrity checks
-    -v                  Print more messages
-````
+## Build & develop
 
-### makedng subcommand
-````
-Lowlevel command to make a DNG file
+### Prerequisites
 
-Usage: dnglab makedng [OPTIONS] --input <INPUT>...
+- Rust toolchain (`rustup`) with the `wasm32-unknown-unknown` target
+- [`wasm-pack`](https://rustwasm.github.io/wasm-pack/) (`cargo install wasm-pack`)
+- Node.js 20+
 
-Options:
-  -d...
-          turns on debugging mode
+### Local dev
 
-  -o, --output <OUTPUT>
-          Output DNG file path
+```bash
+cd web
+npm install
+npm run wasm        # builds rawler-wasm into wasm/pkg/
+npm run dev         # generates HTML, starts Vite on http://localhost:5173
+```
 
-  -i, --input <INPUT>...
-          Input files to merge into a single DNG file. Usually only a single input file is used.
-          If multiple input files are given, --map should be used to specifiy how to interpret each intput file.
+`npm run dev` runs the page generator first (`scripts/gen-pages.ts` materializes
+trilingual HTML files) and then Vite. The dev server reloads on TS/CSS changes;
+re-run `npm run wasm` if you touch Rust.
 
-  -v
-          Print more messages
+### Production build
 
-      --map <map>...
-          When multiple input files given, each input file should be mapped to a specific type of data.
-          First input file starts with index 0. Possible types are 'raw', 'preview', 'thumbnail', 'exif', 'xmp'.
-          Input files which are not mapped are ignored.
+```bash
+cd web
+npm run build       # wasm + page gen + vite build + sitemap
+npm run preview     # serve dist/ locally via wrangler
+```
 
-          [default: 0:raw 0:preview 0:thumbnail 0:exif 0:xmp]
+### Deploy (Cloudflare Workers)
 
-      --dng-backward-version <version>
-          DNG specification version
+```bash
+cd web
+npm run deploy      # wraps `wrangler deploy`
+```
 
-          [default: 1.4]
-          [possible values: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6]
+Production config lives in [`web/wrangler.jsonc`](web/wrangler.jsonc). The
+custom domain `dng.neoanaloglab.com` is bound automatically; change `name`,
+`routes`, and the `vars` block if you fork.
 
-      --colorimetric-reference <reference>
-          Reference for XYZ values
+CI is wired to Cloudflare Workers Builds — see
+[CLOUDFLARE_BUILDS.md](CLOUDFLARE_BUILDS.md) for the GA4 measurement-id env var
+setup and the `gen-cameras` build step.
 
-          [default: scene]
-          [possible values: scene, output]
+## Using the WASM crate directly
 
-      --unique-camera-model <id>
-          Unique camera model
+`wasm/pkg/` is a standard `wasm-pack` output, so you can pull it into any
+bundler-driven project:
 
-      --artist <artist>
-          Set the Artist tag
+```ts
+import init, { convert_raw_to_dng, detect_camera } from "rawler-wasm";
 
-      --make <make>
-          Set the Make tag
+await init();
+const raw = new Uint8Array(await file.arrayBuffer());
+const camera = detect_camera(raw);             // "Canon EOS R5"
+const dng = convert_raw_to_dng(raw, {          // Uint8Array of DNG bytes
+  lossless: true,
+  preview: true,
+  thumbnail: true,
+  filename: file.name,
+});
+```
 
-      --model <model>
-          Set the Model tag
+Run heavy conversions in a Web Worker — a 50 MB CR3 takes a few seconds and
+will block the UI thread otherwise.
 
-      --matrix1 <MATRIX>
-          Matrix 1
+## CLI
 
-          [possible values: XYZ_sRGB_D50, XYZ_sRGB_D65, XYZ_AdobeRGB_D50, XYZ_AdobeRGB_D65, "custom 3x3 matrix (comma seperated)"]
-
-      --matrix2 <MATRIX>
-          Matrix 2
-
-          [possible values: XYZ_sRGB_D50, XYZ_sRGB_D65, XYZ_AdobeRGB_D50, XYZ_AdobeRGB_D65, "custom 3x3 matrix (comma seperated)"]
-
-      --matrix3 <MATRIX>
-          Matrix 3
-
-          [possible values: XYZ_sRGB_D50, XYZ_sRGB_D65, XYZ_AdobeRGB_D50, XYZ_AdobeRGB_D65, "custom 3x3 matrix (comma seperated)"]
-
-      --illuminant1 <ILLUMINANT>
-          Illuminant 1
-
-          [possible values: Unknown, A, B, C, D50, D55, D65, D75]
-
-      --illuminant2 <ILLUMINANT>
-          Illuminant 2
-
-          [possible values: Unknown, A, B, C, D50, D55, D65, D75]
-
-      --illuminant3 <ILLUMINANT>
-          Illuminant 3
-
-          [possible values: Unknown, A, B, C, D50, D55, D65, D75]
-
-      --linearization <TABLE>
-          Linearization table
-
-          [possible values: 8bit_sRGB, 8bit_sRGB_invert, 16bit_sRGB, 16bit_sRGB_invert, 8bit_gamma1.8, 8bit_gamma1.8_invert, 8bit_gamma2.0, 8bit_gamma2.0_invert, 8bit_gamma2.2, 8bit_gamma2.2_invert, 8bit_gamma2.4, 8bit_gamma2.4_invert, 16bit_gamma1.8, 16bit_gamma1.8_invert, 16bit_gamma2.0, 16bit_gamma2.0_invert, 16bit_gamma2.2, 16bit_gamma2.2_invert, 16bit_gamma2.4, 16bit_gamma2.4_invert, "custom table (comma seperated)"]
-
-      --wb <R,G,B>
-          Whitebalance as-shot
-
-      --white-xy <x,y>
-          Whitebalance as-shot encoded as xy chromaticity coordinates
-
-          [possible values: D50, D65, "custom x,y value (comma seperated)"]
-
-  -f, --override
-          Override existing files
-
-  -h, --help
-          Print help (see a summary with '-h')
-
-````
-
-## Contribute samples
-Please see our guide: [CONTRIBUTE_SAMPLES.md](CONTRIBUTE_SAMPLES.md).
-
-## FAQ
-
-### Why a DNG tool if there is already something from Adobe?
-The DNG converter from Adobe is free (at cost), but not free in terms of free software. Nobody can add or fix camera support except of Adobe. And it has no support for Linux. That's why I've started writing my own little DNG swiss army knife.
-
-### Why should I use DNG instead of RAW?
-Never ask. If you need DNG you will know.
-
-
-### Will camera/format (...) be added?
-Well, depends on developer resources.
-
-### Is a GUI in planning?
-Yes, DNGLab should get a GUI in near future.
-
-### How can I donate to this project?
-I don't have any sponsoring or donation account like Patreon or Paypal.
-If you want to surprise me, please have a look at my [Amazon wish list](https://www.amazon.de/hz/wishlist/ls/DJ87KTFQUK8D?ref_=wl_share).
-
+The original `dnglab` command-line tool is unchanged in this fork. For CLI
+usage, supported subcommands, and `analyze`/`extract`/`makedng` flags, see the
+upstream documentation at <https://github.com/dnglab/dnglab>.
 
 ## Credits
 
-Special thanks goes to:
+This project would not exist without:
 
- * Darktable developer team [www.darktable.org](https://www.darktable.org)
- * Laurent Clévy [CR3 documentation](https://github.com/lclevy/canon_cr3)
- * Kostya Shishkov
- * Hubert Kowalski
- * Rawloader development team [rawloader](https://github.com/pedrocr/rawloader)
- * All volunteers who have contributed samples.
+- [**dnglab/dnglab**](https://github.com/dnglab/dnglab) and the `rawler` crate —
+  every byte of decoding logic comes from there.
+- The Darktable team and Laurent Clévy's CR3 reverse-engineering work, on which
+  much of `rawler` is built.
+- The wider rawloader / open-source RAW community.
 
-Without the support and engagement from these people the development of
-dnglab would not have been possible.
+The web UI, WASM bindings, multilingual content, and Cloudflare deployment
+are the only original contributions of this fork.
+
+## License
+
+LGPL-2.1, inherited from upstream `dnglab` / `rawler`. See [LICENSE](LICENSE).

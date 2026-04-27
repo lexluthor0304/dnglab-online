@@ -39,6 +39,12 @@
   gap: calc(var(--unit) * 2);
 }
 
+.site-header .github-star {
+  display: inline-flex;
+  align-items: center;
+}
+.site-header .github-star .github-button { vertical-align: middle; }
+
 main {
   max-width: 960px;
   margin: 0 auto;

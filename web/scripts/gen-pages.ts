@@ -32,6 +32,8 @@ const dicts: Record<Lang, Record<string, string>> = {
 
 const SITE_ORIGIN = fromEnv("VITE_SITE_ORIGIN", "https://dng.neoanaloglab.com");
 const BRAND_HOME  = fromEnv("VITE_BRAND_HOME",  "https://neoanaloglab.com");
+const REPO_URL    = fromEnv("VITE_REPO_URL",    "https://github.com/lexluthor0304/dnglab-online");
+const REPO_SLUG   = REPO_URL.replace(/^https?:\/\/github\.com\//, "").replace(/\/+$/, "");
 // GA4 measurement id. Set to empty in shell (e.g. via `npm run dev`) to skip
 // injection during local development so dev pageviews don't pollute stats.
 const GA_ID       = fromEnv("VITE_GA_ID");
@@ -113,6 +115,12 @@ function header(lang: Lang): string {
   </nav>
   <div class="header-actions">
     <span id="status-pill" class="pill" data-i18n="status.warming">${escapeHtml(tt(lang, "status.warming"))}</span>
+    <span class="github-star">
+      <a class="github-button" href="${REPO_URL}"
+         data-color-scheme="no-preference: dark; light: light; dark: dark;"
+         data-icon="octicon-star" data-show-count="true"
+         aria-label="Star ${escapeHtml(REPO_SLUG)} on GitHub">Star</a>
+    </span>
     <span class="lang-switcher" aria-label="${escapeHtml(tt(lang, "lang.switcher"))}">
       <a href="/zh/" data-lang="zh">中</a>
       <a href="/en/" data-lang="en">EN</a>
@@ -132,7 +140,7 @@ function footer(lang: Lang): string {
   </p>
   <p>
     ${link("privacy", "nav.privacy")} · ${link("terms", "nav.terms")} · ${link("cookies", "nav.cookies")}
-    · <a href="https://github.com/dnglab/dnglab" data-i18n="footer.github">${escapeHtml(tt(lang, "footer.github"))}</a>
+    · <a href="${REPO_URL}" data-i18n="footer.github">${escapeHtml(tt(lang, "footer.github"))}</a>
     · <a href="#" data-cookie-settings data-i18n="footer.cookieSettings">${escapeHtml(tt(lang, "footer.cookieSettings"))}</a>
   </p>
 </footer>`;
@@ -262,6 +270,7 @@ ${head(lang, page)}
 ${header(lang)}
 ${body}
 ${footer(lang)}
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 ${entryShim(lang, page.kind)}
 </body>
 </html>

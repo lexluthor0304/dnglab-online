@@ -1,0 +1,188 @@
+<p>Canon CR3、Nikon NEF、Sony ARW、Fujifilm RAF などのカメラ純正 RAW を Adobe DNG に
+変換する手段は、現在大きく 3 つあります。クローズドソースの
+<strong>Adobe DNG Converter</strong>、オープンソースのコマンドラインツール
+<strong>dnglab CLI</strong>、そしてブラウザで動く
+<strong>dnglab-online</strong>。目的は同じでも、トレードオフはまったく違います。
+このページは「どれを選べばいいのか」への簡潔な答えです。</p>
+
+<h2 id="tldr">結論（一言）</h2>
+
+<ul>
+  <li><strong>1 ファイルだけ・インストール不要・どんな OS / 端末でも：</strong>
+      <a href="/ja/">dnglab-online</a> を使う。</li>
+  <li><strong>数百〜数千ファイルをバッチ／スクリプトで処理：</strong>
+      <a href="https://github.com/dnglab/dnglab/releases">dnglab CLI</a> を使う。</li>
+  <li><strong>すでに Adobe エコシステム（Windows / macOS）にいて、自分のカメラが対応済み：</strong>
+      <a href="https://helpx.adobe.com/camera-raw/digital-negative.html">Adobe DNG Converter</a> を使う。</li>
+</ul>
+
+<h2 id="matrix">機能比較表</h2>
+
+<table class="camera-table">
+  <thead>
+    <tr>
+      <th>項目</th>
+      <th>dnglab-online</th>
+      <th>Adobe DNG Converter</th>
+      <th>dnglab CLI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>価格</td>                          <td>無料</td>            <td>無料</td>             <td>無料</td></tr>
+    <tr><td>オープンソース</td>                  <td>Yes（LGPL-2.1）</td> <td>No</td>               <td>Yes（LGPL-2.1）</td></tr>
+    <tr><td>インストール必要</td>                <td>不要</td>             <td>必要</td>              <td>必要</td></tr>
+    <tr><td>Linux / BSD で動作</td>            <td>Yes</td>              <td>No</td>              <td>Yes</td></tr>
+    <tr><td>ChromeOS / iPad で動作</td>        <td>Yes</td>              <td>No</td>              <td>No</td></tr>
+    <tr><td>Windows / macOS で動作</td>        <td>Yes</td>              <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>初回ロード後オフライン可</td>          <td>Yes</td>              <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>ファイルがサーバへ送信される</td>      <td>No（仕組み上不可能）</td> <td>No</td>               <td>No</td></tr>
+    <tr><td>バッチ／フォルダ再帰</td>             <td>No（1 ファイルずつ）</td> <td>Yes</td>             <td>Yes</td></tr>
+    <tr><td>マルチスレッド</td>                  <td>No（シングルスレッド WASM）</td> <td>Yes</td>     <td>Yes（rayon）</td></tr>
+    <tr><td>処理速度（相対）</td>                <td>1×</td>              <td>~2–3×</td>            <td>~4–10×</td></tr>
+    <tr><td>出力フォーマット</td>                <td>Adobe DNG 1.4</td>   <td>Adobe DNG 1.6</td>   <td>Adobe DNG 1.4</td></tr>
+    <tr><td>LJPEG-92 ロスレス圧縮</td>           <td>Yes（既定）</td>       <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>非圧縮 DNG オプション</td>           <td>Yes</td>               <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>プレビュー／サムネイル埋め込み</td>     <td>Yes</td>               <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>DNG opcode（レンズ／周辺光量補正）追加</td><td>No</td>            <td>Yes</td>              <td>No</td></tr>
+    <tr><td>Adobe カラープロファイル（DCP）追加</td><td>No</td>              <td>Yes</td>              <td>No</td></tr>
+    <tr><td>新カメラへの対応速度</td>             <td>upstream rawler 追従（コミュニティ）</td> <td>Adobe が定期更新；通常 4–12 週遅れ</td> <td>upstream rawler 追従</td></tr>
+    <tr><td>CR3（Canon ミラーレス）対応</td>      <td>Yes</td>              <td>Yes</td>              <td>Yes</td></tr>
+    <tr><td>HEIF / HIF（Sony α1、α7S III）</td><td>No（RAW でない）</td>  <td>No（RAW でない）</td>   <td>No（RAW でない）</td></tr>
+    <tr><td>モバイル対応</td>                    <td>限定的（メモリ制約）</td> <td>No</td>              <td>No</td></tr>
+    <tr><td>ソース／ドキュメント</td>             <td><a href="https://github.com/lexluthor0304/dnglab-online">GitHub</a></td> <td><a href="https://helpx.adobe.com/camera-raw/digital-negative.html">Adobe ヘルプ</a></td> <td><a href="https://github.com/dnglab/dnglab">GitHub</a></td></tr>
+  </tbody>
+</table>
+
+<h2 id="dnglab-online">dnglab-online — ブラウザ完結型</h2>
+
+<p>dnglab-online は、dnglab CLI を支えているのと同じ Rust 製
+<code>rawler</code> crate を WebAssembly にコンパイルし、静的サイトとして配信
+しています。CR3 / NEF / ARW をドロップエリアに投入し、1〜25 秒待つと DNG が
+ダウンロードされます。インストール不要、アカウント不要、アップロードなし、課金なし。</p>
+
+<p><strong>こんな時に最適：</strong></p>
+<ul>
+  <li>Linux、ChromeOS など Adobe DNG Converter が動かない環境にいる。</li>
+  <li>変換したいファイルが 1〜2 個だけ。Rust ツールチェーンや Debian パッケージは
+      入れたくない。</li>
+  <li>プライバシーを重視する。バックエンドが存在しないので物理的にアップロード
+      できない。</li>
+  <li>カメラが新しすぎて Adobe Converter は未対応だが、dnglab 上流のキャリブレーション
+      DB ではすでにカバーされている。</li>
+</ul>
+
+<p><strong>制約：</strong></p>
+<ul>
+  <li>v1 では一度に 1 ファイルのみ処理可能。バッチ／フォルダ非対応。</li>
+  <li>WASM はシングルスレッドなので、同じマシンでネイティブの dnglab CLI より
+      4〜10 倍ほど遅い。</li>
+  <li>モバイルブラウザでは 60 MB+ のロスレス ARW でメモリ不足になることがある。</li>
+  <li>Adobe 専用の DCP カラープロファイルやレンズ補正 opcode は<em>追加しない</em>。
+      出力は元 RAW を忠実に変換しただけのもので、Adobe 風味ではない。</li>
+</ul>
+
+<h2 id="adobe-dng-converter">Adobe DNG Converter — リファレンス実装</h2>
+
+<p>Adobe 公式の無料デスクトップツール。Windows と macOS のみ提供。DNG 仕様の
+リファレンス実装で、最新の DNG 1.6 をサポートし、Adobe 純正のカラープロファイル
+（DCP）とレンズ補正 opcode を同梱します。</p>
+
+<p><strong>こんな時に最適：</strong></p>
+<ul>
+  <li>Windows / macOS 環境で、自分のカメラが Adobe 対応リストにある。</li>
+  <li>Adobe DCP プロファイルや opcode 駆動のレンズ補正を DNG に埋め込みたい。</li>
+  <li>最新の DNG 1.6 仕様の機能（セマンティックマスクなど）が必要。</li>
+</ul>
+
+<p><strong>制約：</strong></p>
+<ul>
+  <li>クローズドソース。新カメラのサポートは Adobe のリリーススケジュール次第——
+      通常 4〜12 週の遅延。</li>
+  <li>Linux 版なし、ブラウザ版なし、CLI のバッチもスクリプト化に向かない。</li>
+  <li>インストーラが大きい（約 600 MB）。</li>
+</ul>
+
+<h2 id="dnglab-cli">dnglab CLI — パワーユーザー向け</h2>
+
+<p>コマンドライン版 dnglab は upstream プロジェクトそのものです。dnglab-online と
+同じ <code>rawler</code> デコーダを使いつつ、ネイティブのマルチスレッド実行ファイル
+としてコンパイルされます。サブコマンドには <code>convert</code>、
+<code>analyze</code>、<code>extract</code>、<code>makedng</code> があります。</p>
+
+<p><strong>こんな時に最適：</strong></p>
+<ul>
+  <li>数十〜数千ファイルの一括処理が必要。</li>
+  <li>取り込みパイプラインの一部としてスクリプト化したい。</li>
+  <li>未対応カメラのデバッグに analyze / extract が欲しい。</li>
+  <li>同じマシンで最速の OSS RAW → DNG 経路を求めている。</li>
+</ul>
+
+<p><strong>制約：</strong></p>
+<ul>
+  <li>バイナリのインストールが必要（Debian パッケージ、AUR、Homebrew tap、
+      または <code>cargo install</code>）。</li>
+  <li>GUI なし。1〜2 ファイルだけだと取り回しが悪い。</li>
+  <li>Adobe DCP プロファイルやレンズ opcode は付かない。</li>
+</ul>
+
+<h2 id="output-quality">3 つの出力 DNG は同じですか？</h2>
+
+<p>機能的には Yes——どれの出力でも Lightroom Classic、Lightroom CC、Camera Raw、
+Capture One、darktable、RawTherapee で開けます。デモザイク後のピクセルは元 RAW と
+一致します。</p>
+
+<p>違いは<em>ピクセルを包むメタ情報</em>です：</p>
+
+<ul>
+  <li><strong>dnglab</strong>（CLI と online）は DNG 1.4 を出力。元 RAW の EXIF、
+      ホワイトバランスのニュートラル、upstream rawler DB のキャリブレーション行列を
+      保持します。Adobe DCP プロファイルや opcode 駆動のレンズ補正は注入しません。</li>
+  <li><strong>Adobe DNG Converter</strong> は DNG 1.6 を出力。Adobe 純正の DCP
+      カラープロファイル、（任意で）opcode によるレンズ補正、周辺光量補正、
+      Lightroom が好むカメラプロファイルメタデータを含みます。</li>
+</ul>
+
+<p>最終的に Lightroom で現像するなら、カメラプロファイル適用後はどちらも視覚的には
+ほぼ同じです。darktable / RawTherapee / Capture One で現像するなら、他のエディタが
+無視する Adobe 専用 opcode が乗らないぶん、dnglab 出力のほうが少し有利です。</p>
+
+<h2 id="faq">比較 FAQ</h2>
+
+<h3>dnglab-online はデスクトップ版より遅いですか？どのくらい？</h3>
+<p>はい——同じマシンでネイティブの dnglab CLI より 4〜10 倍、Adobe DNG Converter
+より 2〜4 倍ほど遅くなります。WebAssembly がシングルスレッドで、モダンブラウザの
+SIMD 命令ディスパッチがネイティブほど効率的でないためです。30 MB の CR3 1 枚なら
+1〜3 秒の代わりに 5〜15 秒になりますが、単発なら問題ありません。500 ファイルの
+バッチならデスクトップ版が断然有利です。</p>
+
+<h3>dnglab-online は本当に初回ロード後オフラインで動くのですか？</h3>
+<p>はい。初回アクセスで約 6〜10 MB の <code>.wasm</code> と数百 KB の
+HTML / CSS / JS をダウンロードします。それ以降はブラウザがすべてキャッシュし、
+変換中はネットワークアクセスがありません。DevTools の Network タブで実際に
+リクエストが飛んでいないことを確認できます。</p>
+
+<h3>OSS の変換ツールでアーカイブしても大丈夫？</h3>
+<p>dnglab のピクセルデコードロジックは Lightroom や Adobe DNG Converter の出力に
+対して広範に検証されています。バグ報告は新しいセンサーモード（Canon のプリ撮影、
+機内 HDR 合成など）に集中しており、基本的な色や解像度の問題はほぼありません。
+安心のため、エディタで色や解像感を確認するまで元 RAW を残すことをおすすめします。</p>
+
+<h3>新発売のカメラは dnglab で対応されますか？</h3>
+<p>通常リリースから数週間以内に対応されます。upstream rawler のメンテナと darktable
+/ RawTherapee コミュニティがキャリブレーションデータを共有しており、
+<a href="https://github.com/dnglab/dnglab/issues">dnglab/dnglab</a> にサンプル RAW を
+登録すれば、次の minor release で対応されることが多いです。Adobe の更新サイクルは
+もう少し遅め（4〜12 週）です。</p>
+
+<h3>なぜ dnglab-online にはバッチモードがないのですか？</h3>
+<p>v1 では UI を最小限にし、メモリを抑えるのが優先です。100 MB の CR3 ですら
+ブラウザ内で一時的に ~700 MB を使います。50 ファイルをキューに入れさせれば多くの
+ブラウザがクラッシュします。今後ブラウザのメモリ API が安定したら、3〜5 ファイル
+の小さな順次キュー（並列ではない）を追加する計画です。今すぐバッチが必要なら
+dnglab CLI が正解です。</p>
+
+<h2>関連</h2>
+<p>背景：<a href="/ja/about/">dnglab-online について</a>。
+対応カメラ：<a href="/ja/cameras/">対応カメラ一覧</a>。
+フォーマット別ガイド：<a href="/ja/guides/cr3/">Canon CR3 → DNG</a>、
+<a href="/ja/guides/arw/">Sony ARW → DNG</a>。</p>

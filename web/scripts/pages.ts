@@ -31,4 +31,5 @@ export const PAGES: PageDef[] = [
   { slug: "cookies",     kind: "content", titleKey: "nav.cookies",     descKey: "tagline",         bodyFile: "cookies.html" },
   { slug: "guides/cr3",  kind: "content", titleKey: "nav.guides",      descKey: "tagline",         bodyFile: "guides-cr3.html" },
   { slug: "guides/arw",  kind: "content", titleKey: "nav.guides",      descKey: "tagline",         bodyFile: "guides-arw.html" },
+  { slug: "compare",     kind: "content", titleKey: "compare.title",   descKey: "compare.desc",    bodyFile: "compare.html" },
 ];

@@ -1,0 +1,171 @@
+<p>把 Canon CR3、Nikon NEF、Sony ARW、Fujifilm RAF 等相机原生 RAW 转成 Adobe DNG，
+今天主流的三个选择是：闭源的 <strong>Adobe DNG Converter</strong>、开源的命令行工具
+<strong>dnglab CLI</strong>、以及在浏览器里跑的 <strong>dnglab-online</strong>。
+三者目标相同，但取舍非常不同。本页就是回答「我该选哪个」。</p>
+
+<h2 id="tldr">一句话结论</h2>
+
+<ul>
+  <li><strong>只有一个文件、不想装东西、任意系统、任意设备：</strong>用
+      <a href="/zh/">dnglab-online</a>。</li>
+  <li><strong>几百到几千张文件、想批量或脚本化：</strong>用
+      <a href="https://github.com/dnglab/dnglab/releases">dnglab CLI</a>。</li>
+  <li><strong>已经在用 Adobe 全家桶（Windows / macOS）、相机也在 Adobe 支持列表里：</strong>用
+      <a href="https://helpx.adobe.com/camera-raw/digital-negative.html">Adobe DNG Converter</a>。</li>
+</ul>
+
+<h2 id="matrix">特性对比表</h2>
+
+<table class="camera-table">
+  <thead>
+    <tr>
+      <th>特性</th>
+      <th>dnglab-online</th>
+      <th>Adobe DNG Converter</th>
+      <th>dnglab CLI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>价格</td>                          <td>免费</td>             <td>免费</td>             <td>免费</td></tr>
+    <tr><td>开源</td>                          <td>是（LGPL-2.1）</td>   <td>否</td>               <td>是（LGPL-2.1）</td></tr>
+    <tr><td>需要安装</td>                       <td>否</td>              <td>是</td>               <td>是</td></tr>
+    <tr><td>支持 Linux / BSD</td>              <td>是</td>               <td>否</td>              <td>是</td></tr>
+    <tr><td>支持 ChromeOS / iPad</td>          <td>是</td>               <td>否</td>              <td>否</td></tr>
+    <tr><td>支持 Windows / macOS</td>          <td>是</td>               <td>是</td>               <td>是</td></tr>
+    <tr><td>首次加载后离线可用</td>              <td>是</td>               <td>是</td>               <td>是</td></tr>
+    <tr><td>文件会上传到服务器</td>              <td>否（技术上不可能）</td> <td>否</td>               <td>否</td></tr>
+    <tr><td>批量 / 文件夹递归</td>               <td>否（一次一个文件）</td> <td>是</td>               <td>是</td></tr>
+    <tr><td>多线程</td>                         <td>否（单线程 WASM）</td> <td>是</td>               <td>是（rayon）</td></tr>
+    <tr><td>速度（相对值）</td>                  <td>1×</td>              <td>~2–3×</td>            <td>~4–10×</td></tr>
+    <tr><td>输出格式</td>                       <td>Adobe DNG 1.4</td>   <td>Adobe DNG 1.6</td>   <td>Adobe DNG 1.4</td></tr>
+    <tr><td>LJPEG-92 无损压缩</td>             <td>是（默认）</td>         <td>是</td>               <td>是</td></tr>
+    <tr><td>未压缩 DNG 选项</td>                 <td>是</td>               <td>是</td>               <td>是</td></tr>
+    <tr><td>嵌入预览图 / 缩略图</td>             <td>是</td>               <td>是</td>               <td>是</td></tr>
+    <tr><td>添加 DNG opcode（镜头 / 暗角校正）</td><td>否</td>              <td>是</td>               <td>否</td></tr>
+    <tr><td>添加 Adobe 颜色配置文件（DCP）</td>   <td>否</td>               <td>是</td>               <td>否</td></tr>
+    <tr><td>新相机支持节奏</td>                  <td>跟随上游 rawler（社区驱动）</td> <td>Adobe 周期性更新；通常滞后 4–12 周</td> <td>跟随上游 rawler</td></tr>
+    <tr><td>支持 CR3（佳能无反）</td>             <td>是</td>               <td>是</td>               <td>是</td></tr>
+    <tr><td>HEIF / HIF（Sony α1、α7S III）</td><td>否（不是 RAW）</td>    <td>否（不是 RAW）</td>     <td>否（不是 RAW）</td></tr>
+    <tr><td>移动端友好</td>                     <td>有限（受内存约束）</td>   <td>否</td>               <td>否</td></tr>
+    <tr><td>源码 / 文档</td>                    <td><a href="https://github.com/lexluthor0304/dnglab-online">GitHub</a></td> <td><a href="https://helpx.adobe.com/camera-raw/digital-negative.html">Adobe Help</a></td> <td><a href="https://github.com/dnglab/dnglab">GitHub</a></td></tr>
+  </tbody>
+</table>
+
+<h2 id="dnglab-online">dnglab-online — 浏览器内方案</h2>
+
+<p>dnglab-online 把驱动 dnglab CLI 的同一份 Rust <code>rawler</code> crate 编译成
+WebAssembly，再以静态网页的形式发布。把 CR3 / NEF / ARW 拖进上传区，等
+1–25 秒就能下载到 DNG。无需安装、无需账号、无上传、零费用。</p>
+
+<p><strong>适合场景：</strong></p>
+<ul>
+  <li>你在 Linux、ChromeOS 或任何 Adobe DNG Converter 跑不了的平台上。</li>
+  <li>只需要转一两张文件，不想为此装 Rust 工具链或 Debian 包。</li>
+  <li>在意隐私——文件物理上无法被上传，因为根本没有后端。</li>
+  <li>相机刚发布、Adobe Converter 还没支持、但 dnglab 上游的相机库已经覆盖到了。</li>
+</ul>
+
+<p><strong>限制：</strong></p>
+<ul>
+  <li>v1 一次只处理一个文件，不支持批量 / 文件夹。</li>
+  <li>WASM 是单线程的，所以同一台机器上比原生 dnglab CLI 慢 4–10 倍。</li>
+  <li>移动端浏览器在 60 MB+ 的无损 ARW 上可能内存不足。</li>
+  <li><em>不会</em>添加 Adobe 专属的内容，比如 DCP 颜色配置文件或镜头校正
+      opcode——输出的是对原始 RAW 的忠实转换，而不是 Adobe 风味的版本。</li>
+</ul>
+
+<h2 id="adobe-dng-converter">Adobe DNG Converter — 标准参考实现</h2>
+
+<p>Adobe 官方免费桌面工具，仅有 Windows 和 macOS 版本。它是 DNG 规范的参考实现，
+支持最新的 DNG 1.6，并捆绑 Adobe 自家的颜色配置文件（DCP）和镜头校正 opcode。</p>
+
+<p><strong>适合场景：</strong></p>
+<ul>
+  <li>你在 Windows 或 macOS 上，且相机在 Adobe 支持列表里。</li>
+  <li>希望 DNG 嵌入 Adobe DCP 配置文件或 opcode 驱动的镜头校正。</li>
+  <li>需要最新 DNG 1.6 规范的特性（例如语义遮罩支持）。</li>
+</ul>
+
+<p><strong>限制：</strong></p>
+<ul>
+  <li>闭源。新相机支持依赖 Adobe 的发版节奏——典型滞后 4–12 周。</li>
+  <li>没有 Linux 版本、没有浏览器版本，CLI 批量也不算好脚本化。</li>
+  <li>安装包不小（约 600 MB），对很多人来说有点重。</li>
+</ul>
+
+<h2 id="dnglab-cli">dnglab CLI — 重度用户首选</h2>
+
+<p>命令行版的 dnglab 是上游项目本体。它和 dnglab-online 共用同一份
+<code>rawler</code> 解码器，但编译成原生多线程可执行文件。子命令包括
+<code>convert</code>、<code>analyze</code>、<code>extract</code>、<code>makedng</code>。</p>
+
+<p><strong>适合场景：</strong></p>
+<ul>
+  <li>批量处理几十到几千张 RAW。</li>
+  <li>想把转换嵌入到导入流水线里脚本化。</li>
+  <li>需要 analyze / extract 子命令来调试不被支持的相机。</li>
+  <li>同一台机器上想要最快的开源 RAW → DNG 路径。</li>
+</ul>
+
+<p><strong>限制：</strong></p>
+<ul>
+  <li>需要安装二进制（Debian 包、AUR、Homebrew tap，或 <code>cargo install</code>）。</li>
+  <li>没有 GUI，只有一两张文件时不够顺手。</li>
+  <li>不会添加 Adobe DCP 配置文件或镜头 opcode。</li>
+</ul>
+
+<h2 id="output-quality">三家输出的 DNG 是一样的吗？</h2>
+
+<p>功能上是的——三者输出都能被 Lightroom Classic、Lightroom CC、Camera Raw、
+Capture One、darktable、RawTherapee 直接打开。去马赛克之后的像素和原始 RAW 一致。</p>
+
+<p>差别在于<em>包在像素外面的元信息</em>：</p>
+
+<ul>
+  <li><strong>dnglab</strong>（CLI 和 online）写的是 DNG 1.4，保留原始 RAW 的
+      EXIF、白平衡中性点和上游 rawler 数据库里的相机校准矩阵。它不会注入
+      Adobe DCP 配置文件或 opcode 驱动的镜头校正。</li>
+  <li><strong>Adobe DNG Converter</strong> 写的是 DNG 1.6，带 Adobe 自家的
+      DCP 颜色配置、（可选）opcode 驱动的镜头校正、暗角补偿，以及 Lightroom
+      偏好的相机配置元数据。</li>
+</ul>
+
+<p>如果你最终就是要在 Lightroom 里调，两条路出来的视觉效果在套用相机配置后差异
+不大。如果你打算用 darktable / RawTherapee / Capture One 调，dnglab 输出反而
+略有优势，因为不会带其他编辑器忽略的 Adobe 专属 opcode。</p>
+
+<h2 id="faq">对比常见问题</h2>
+
+<h3>dnglab-online 比桌面工具慢吗？慢多少？</h3>
+<p>是的——同一台机器上比原生 dnglab CLI 慢 4–10 倍，比 Adobe DNG Converter 慢
+2–4 倍。原因是 WebAssembly 单线程，且现代浏览器对 SIMD 指令的派发不如原生代码
+高效。具体到一张 30 MB CR3，就是 5–15 秒 vs 1–3 秒，单张完全够用；要批量 500
+张文件，桌面方案显然更合适。</p>
+
+<h3>dnglab-online 真的首次加载后就完全离线吗？</h3>
+<p>是的。首次访问会下载约 6–10 MB 的 <code>.wasm</code> 和几百 KB 的 HTML/CSS/JS。
+之后浏览器把这些缓存下来，转换过程零网络请求。你可以打开 DevTools 的 Network
+面板验证——转换时不会有任何请求发出。</p>
+
+<h3>开源转换器拿来做归档可靠吗？</h3>
+<p>dnglab 项目的像素解码逻辑经过了大量针对 Lightroom 和 Adobe DNG Converter
+输出的对比测试。Bug 报告几乎都集中在特定的新传感器模式上（例如 Canon 的预拍摄、
+机内 HDR 合成），而不是基础的色彩或细节问题。为了安心，建议在编辑器里验证过
+颜色和细节后再删原始 RAW。</p>
+
+<h3>新相机会被 dnglab 支持吗？</h3>
+<p>通常发布后几周内就能。上游 rawler 维护者和 darktable / RawTherapee 社区会
+共享校准数据；只要在 <a href="https://github.com/dnglab/dnglab/issues">dnglab/dnglab</a>
+提交一份样张，下一个 minor release 通常就会带上。Adobe 的更新节奏要慢一些（4–12 周）。</p>
+
+<h3>为什么 dnglab-online 没有批量模式？</h3>
+<p>v1 优先把 UI 做轻、把内存压住——一张 100 MB 的 CR3 在浏览器里瞬时就能用掉
+~700 MB。如果允许一次排队 50 个文件，多数浏览器会直接崩。Roadmap 是等浏览器
+内存 API 稳定后加一个小队列（3–5 个串行，而不是并行）。当下要批量，dnglab CLI
+才是正解。</p>
+
+<h2>相关</h2>
+<p>背景：<a href="/zh/about/">关于 dnglab-online</a>。
+相机覆盖：<a href="/zh/cameras/">支持的相机</a>。
+按格式细分的指南：<a href="/zh/guides/cr3/">Canon CR3 → DNG</a>、
+<a href="/zh/guides/arw/">Sony ARW → DNG</a>。</p>
